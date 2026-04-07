@@ -39,3 +39,13 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+
+# Private / sensitive — never push to public repo
+Certifications/
+Bugs/
+LM Company Profile Photos/
+
+# Local-only PDF source and its image assets
+company-profile.html
+images/profile-stock/
+images/profile-photos/

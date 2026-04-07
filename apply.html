@@ -89,10 +89,18 @@
                             <label for="position" class="form-label">Position Applying For *</label>
                             <select id="position" name="position" class="form-input" required>
                                 <option value="">Select a position</option>
-                                <option value="executive-secretary">Executive Secretary</option>
-                                <option value="hvac-engineer">HVAC Engineer</option>
-                                <option value="social-media-marketing">Social Media & Marketing Manager</option>
-                                <option value="other">Other Position</option>
+                                <option value="Executive Secretary">Executive Secretary</option>
+                                <option value="HVAC Engineer">HVAC Engineer</option>
+                                <option value="Social Media & Marketing Manager">Social Media & Marketing Manager</option>
+                                <option value="Accountant">Accountant</option>
+                                <option value="MEP Engineer">MEP Engineer</option>
+                                <option value="Electrical Engineer">Electrical Engineer</option>
+                                <option value="Swimming Pool Maintenance Supervisor">Swimming Pool Maintenance Supervisor</option>
+                                <option value="Facilities Supervisor">Facilities Supervisor</option>
+                                <option value="Admin Assistant">Admin Assistant</option>
+                                <option value="HVAC Supervisor">HVAC Supervisor</option>
+                                <option value="Cleaning Supervisor">Cleaning Supervisor</option>
+                                <option value="Other">Other Position</option>
                             </select>
                             <span class="form-error" id="positionError"></span>
                         </div>
@@ -199,5 +207,68 @@
     </footer>
 
     <script src="js/script.js?v=10"></script>
+    <script>
+        // Application form: send to finance@marquise.ae via the user's email client
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.getElementById('applicationForm');
+            if (!form) return;
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                var firstName   = document.getElementById('firstName').value.trim();
+                var lastName    = document.getElementById('lastName').value.trim();
+                var email       = document.getElementById('email').value.trim();
+                var phone       = document.getElementById('phone').value.trim();
+                var position    = document.getElementById('position').value;
+                var experience  = document.getElementById('experience').value.trim();
+                var education   = document.getElementById('education').value.trim();
+                var coverLetter = document.getElementById('coverLetter').value.trim();
+                var resume      = document.getElementById('resume').value.trim();
+
+                if (!firstName || !lastName || !email || !phone || !position || !experience || !education || !coverLetter) {
+                    return; // Let the browser's required-field validation handle it
+                }
+
+                var subject = 'Job Application: ' + position + ' — ' + firstName + ' ' + lastName;
+
+                var body =
+                    'New job application received via marquise.ae\n' +
+                    '=============================================\n\n' +
+                    'POSITION:        ' + position + '\n\n' +
+                    'APPLICANT\n' +
+                    '---------\n' +
+                    'Name:            ' + firstName + ' ' + lastName + '\n' +
+                    'Email:           ' + email + '\n' +
+                    'Phone:           ' + phone + '\n\n' +
+                    'EXPERIENCE\n' +
+                    '----------\n' +
+                    'Years:           ' + experience + '\n' +
+                    'Education:       ' + education + '\n\n' +
+                    'COVER LETTER\n' +
+                    '------------\n' +
+                    coverLetter + '\n\n' +
+                    'RESUME\n' +
+                    '------\n' +
+                    (resume ? resume : '(not provided)') + '\n';
+
+                var mailto = 'mailto:finance@marquise.ae'
+                    + '?subject=' + encodeURIComponent(subject)
+                    + '&body=' + encodeURIComponent(body);
+
+                window.location.href = mailto;
+
+                var successMessage = document.getElementById('formSuccess');
+                if (successMessage) {
+                    successMessage.classList.add('visible');
+                    setTimeout(function () {
+                        successMessage.classList.remove('visible');
+                    }, 6000);
+                }
+
+                form.reset();
+            });
+        });
+    </script>
 </body>
 </html>
