@@ -267,7 +267,14 @@
                         body: formData
                     });
 
-                    if (response.ok) {
+                    var result;
+                    try { result = await response.json(); } catch (e) { result = null; }
+
+                    // FormSubmit returns 200 OK even on failure; the "success"
+                    // field in the JSON body is what actually matters.
+                    var didSucceed = response.ok && result && String(result.success) === 'true';
+
+                    if (didSucceed) {
                         var successMessage = document.getElementById('formSuccess');
                         if (successMessage) {
                             successMessage.classList.add('visible');
@@ -277,10 +284,8 @@
                         }
                         form.reset();
                     } else {
-                        var result;
-                        try { result = await response.json(); } catch (e) { result = response.statusText; }
                         alert('Sorry, your application could not be sent right now. Please email us directly at finance@marquise.ae or try again in a moment.');
-                        console.error('FormSubmit error:', result);
+                        console.error('FormSubmit error:', result || response.statusText);
                     }
                 } catch (err) {
                     alert('Sorry, your application could not be sent right now. Please check your connection and try again, or email us directly at finance@marquise.ae.');
