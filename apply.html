@@ -208,13 +208,13 @@
 
     <script src="js/script.js?v=10"></script>
     <script>
-        // Application form: submit directly to Web3Forms which delivers
-        // the email to finance@marquise.ae.
+        // Application form: submit directly to FormSubmit which delivers
+        // the email (with attached CV) to finance@marquise.ae.
         document.addEventListener('DOMContentLoaded', function () {
             var form = document.getElementById('applicationForm');
             if (!form) return;
 
-            var WEB3FORMS_KEY = 'e0acca7f-2047-40da-924c-c10b47a6358a';
+            var FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/finance@marquise.ae';
 
             form.addEventListener('submit', async function (event) {
                 event.preventDefault();
@@ -241,11 +241,12 @@
                     submitButton.textContent = 'Sending...';
                 }
 
-                // Use FormData so the CV file gets uploaded as an attachment.
+                // FormSubmit accepts multipart/form-data, which is what we need
+                // so the CV file gets attached to the resulting email.
                 var formData = new FormData();
-                formData.append('access_key', WEB3FORMS_KEY);
-                formData.append('subject', 'Job Application: ' + position + ' — ' + firstName + ' ' + lastName);
-                formData.append('from_name', firstName + ' ' + lastName + ' (La Marquise Careers)');
+                formData.append('_subject', 'Job Application: ' + position + ' — ' + firstName + ' ' + lastName);
+                formData.append('_template', 'table');
+                formData.append('_captcha', 'false');
                 formData.append('First Name', firstName);
                 formData.append('Last Name', lastName);
                 formData.append('Email', email);
@@ -258,7 +259,7 @@
                 formData.append('attachment', resumeFile, resumeFile.name);
 
                 try {
-                    var response = await fetch('https://api.web3forms.com/submit', {
+                    var response = await fetch(FORMSUBMIT_ENDPOINT, {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json'
@@ -266,9 +267,7 @@
                         body: formData
                     });
 
-                    var result = await response.json();
-
-                    if (response.ok && result.success) {
+                    if (response.ok) {
                         var successMessage = document.getElementById('formSuccess');
                         if (successMessage) {
                             successMessage.classList.add('visible');
@@ -278,8 +277,10 @@
                         }
                         form.reset();
                     } else {
+                        var result;
+                        try { result = await response.json(); } catch (e) { result = response.statusText; }
                         alert('Sorry, your application could not be sent right now. Please email us directly at finance@marquise.ae or try again in a moment.');
-                        console.error('Web3Forms error:', result);
+                        console.error('FormSubmit error:', result);
                     }
                 } catch (err) {
                     alert('Sorry, your application could not be sent right now. Please check your connection and try again, or email us directly at finance@marquise.ae.');
