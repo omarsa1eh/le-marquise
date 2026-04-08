@@ -118,14 +118,14 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="coverLetter" class="form-label">Cover Letter / Why should we hire you? *</label>
-                            <textarea id="coverLetter" name="coverLetter" class="form-input form-textarea" rows="6" required></textarea>
+                            <label for="coverLetter" class="form-label">Cover Letter / Why should we hire you?</label>
+                            <textarea id="coverLetter" name="coverLetter" class="form-input form-textarea" rows="6" placeholder="Optional — tell us a bit about yourself"></textarea>
                             <span class="form-error" id="coverLetterError"></span>
                         </div>
 
                         <div class="form-group">
-                            <label for="resume" class="form-label">Resume/CV (Please provide a link to your resume)</label>
-                            <input type="url" id="resume" name="resume" class="form-input" placeholder="https://example.com/your-resume.pdf">
+                            <label for="resume" class="form-label">Resume / CV *</label>
+                            <input type="file" id="resume" name="resume" class="form-input" accept=".pdf,.doc,.docx,.rtf,.txt,.odt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
                             <span class="form-error" id="resumeError"></span>
                         </div>
 
@@ -227,9 +227,10 @@
                 var experience  = document.getElementById('experience').value.trim();
                 var education   = document.getElementById('education').value.trim();
                 var coverLetter = document.getElementById('coverLetter').value.trim();
-                var resume      = document.getElementById('resume').value.trim();
+                var resumeInput = document.getElementById('resume');
+                var resumeFile  = resumeInput && resumeInput.files && resumeInput.files[0];
 
-                if (!firstName || !lastName || !email || !phone || !position || !experience || !education || !coverLetter) {
+                if (!firstName || !lastName || !email || !phone || !position || !experience || !education || !resumeFile) {
                     return; // Let the browser's required-field validation handle it
                 }
 
@@ -240,30 +241,29 @@
                     submitButton.textContent = 'Sending...';
                 }
 
-                var payload = {
-                    access_key: WEB3FORMS_KEY,
-                    subject: 'Job Application: ' + position + ' — ' + firstName + ' ' + lastName,
-                    from_name: firstName + ' ' + lastName + ' (La Marquise Careers)',
-                    'First Name': firstName,
-                    'Last Name': lastName,
-                    'Email': email,
-                    'Phone': phone,
-                    'Position Applying For': position,
-                    'Years of Experience': experience,
-                    'Highest Education': education,
-                    'Cover Letter': coverLetter,
-                    'Resume / CV Link': resume || '(not provided)',
-                    'Source': 'marquise.ae careers form'
-                };
+                // Use FormData so the CV file gets uploaded as an attachment.
+                var formData = new FormData();
+                formData.append('access_key', WEB3FORMS_KEY);
+                formData.append('subject', 'Job Application: ' + position + ' — ' + firstName + ' ' + lastName);
+                formData.append('from_name', firstName + ' ' + lastName + ' (La Marquise Careers)');
+                formData.append('First Name', firstName);
+                formData.append('Last Name', lastName);
+                formData.append('Email', email);
+                formData.append('Phone', phone);
+                formData.append('Position Applying For', position);
+                formData.append('Years of Experience', experience);
+                formData.append('Highest Education', education);
+                formData.append('Cover Letter', coverLetter || '(not provided)');
+                formData.append('Source', 'marquise.ae careers form');
+                formData.append('attachment', resumeFile, resumeFile.name);
 
                 try {
                     var response = await fetch('https://api.web3forms.com/submit', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify(payload)
+                        body: formData
                     });
 
                     var result = await response.json();
