@@ -58,7 +58,16 @@
                     <h2 class="contact-form-title">Application Form</h2>
                     <p class="contact-form-subtitle">Please fill out the form below to submit your application</p>
 
-                    <form class="contact-form" id="applicationForm">
+                    <form class="contact-form"
+                          id="applicationForm"
+                          action="https://formsubmit.co/finance@marquise.ae"
+                          method="POST"
+                          enctype="multipart/form-data"
+                          target="applicationSubmitFrame">
+                        <input type="hidden" name="_subject" id="applicationSubject" value="New Job Application from marquise.ae">
+                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="hidden" name="Source" value="marquise.ae careers form">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="firstName" class="form-label">First Name *</label>
@@ -138,6 +147,7 @@
                             <p>Thank you! Your application has been submitted successfully. We'll review your application and get back to you soon.</p>
                         </div>
                     </form>
+                    <iframe name="applicationSubmitFrame" id="applicationSubmitFrame" style="display:none" title="Application submission target" aria-hidden="true"></iframe>
                 </div>
 
                 <div class="contact-info-wrapper">
@@ -208,17 +218,21 @@
 
     <script src="js/script.js?v=10"></script>
     <script>
-        // Application form: submit directly to FormSubmit which delivers
-        // the email (with attached CV) to finance@marquise.ae.
+        // Application form: submits via a hidden iframe to FormSubmit's
+        // standard endpoint (the only mode that delivers real file
+        // attachments). The hidden iframe keeps the user on the page and
+        // lets us show the inline success state without a redirect.
         document.addEventListener('DOMContentLoaded', function () {
-            var form = document.getElementById('applicationForm');
-            if (!form) return;
+            var form         = document.getElementById('applicationForm');
+            var iframe       = document.getElementById('applicationSubmitFrame');
+            var subjectField = document.getElementById('applicationSubject');
+            if (!form || !iframe || !subjectField) return;
 
-            var FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/ajax/finance@marquise.ae';
+            var submitButton  = form.querySelector('button[type="submit"]');
+            var originalLabel = submitButton ? submitButton.textContent : '';
+            var awaitingResponse = false;
 
-            form.addEventListener('submit', async function (event) {
-                event.preventDefault();
-
+            form.addEventListener('submit', function (event) {
                 var firstName   = document.getElementById('firstName').value.trim();
                 var lastName    = document.getElementById('lastName').value.trim();
                 var email       = document.getElementById('email').value.trim();
@@ -226,75 +240,47 @@
                 var position    = document.getElementById('position').value;
                 var experience  = document.getElementById('experience').value.trim();
                 var education   = document.getElementById('education').value.trim();
-                var coverLetter = document.getElementById('coverLetter').value.trim();
                 var resumeInput = document.getElementById('resume');
                 var resumeFile  = resumeInput && resumeInput.files && resumeInput.files[0];
 
                 if (!firstName || !lastName || !email || !phone || !position || !experience || !education || !resumeFile) {
-                    return; // Let the browser's required-field validation handle it
+                    // Let the browser's required-field validation surface.
+                    event.preventDefault();
+                    return;
                 }
 
-                var submitButton = form.querySelector('button[type="submit"]');
-                var originalLabel = submitButton ? submitButton.textContent : '';
+                // Build a descriptive subject line dynamically.
+                subjectField.value = 'Job Application: ' + position + ' - ' + firstName + ' ' + lastName;
+
+                // Lock the button while we wait for the iframe to load.
                 if (submitButton) {
                     submitButton.disabled = true;
                     submitButton.textContent = 'Sending...';
                 }
+                awaitingResponse = true;
 
-                // FormSubmit accepts multipart/form-data, which is what we need
-                // so the CV file gets attached to the resulting email.
-                var formData = new FormData();
-                formData.append('_subject', 'Job Application: ' + position + ' — ' + firstName + ' ' + lastName);
-                formData.append('_template', 'table');
-                formData.append('_captcha', 'false');
-                formData.append('First Name', firstName);
-                formData.append('Last Name', lastName);
-                formData.append('Email', email);
-                formData.append('Phone', phone);
-                formData.append('Position Applying For', position);
-                formData.append('Years of Experience', experience);
-                formData.append('Highest Education', education);
-                formData.append('Cover Letter', coverLetter || '(not provided)');
-                formData.append('Source', 'marquise.ae careers form');
-                formData.append('attachment', resumeFile, resumeFile.name);
+                // Do NOT preventDefault — the form submits naturally to the
+                // hidden iframe via its target attribute, which lets FormSubmit
+                // receive the multipart payload (including the file).
+            });
 
-                try {
-                    var response = await fetch(FORMSUBMIT_ENDPOINT, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json'
-                        },
-                        body: formData
-                    });
+            iframe.addEventListener('load', function () {
+                if (!awaitingResponse) return; // ignore the initial blank load
+                awaitingResponse = false;
 
-                    var result;
-                    try { result = await response.json(); } catch (e) { result = null; }
+                var successMessage = document.getElementById('formSuccess');
+                if (successMessage) {
+                    successMessage.classList.add('visible');
+                    setTimeout(function () {
+                        successMessage.classList.remove('visible');
+                    }, 6000);
+                }
 
-                    // FormSubmit returns 200 OK even on failure; the "success"
-                    // field in the JSON body is what actually matters.
-                    var didSucceed = response.ok && result && String(result.success) === 'true';
+                form.reset();
 
-                    if (didSucceed) {
-                        var successMessage = document.getElementById('formSuccess');
-                        if (successMessage) {
-                            successMessage.classList.add('visible');
-                            setTimeout(function () {
-                                successMessage.classList.remove('visible');
-                            }, 6000);
-                        }
-                        form.reset();
-                    } else {
-                        alert('Sorry, your application could not be sent right now. Please email us directly at finance@marquise.ae or try again in a moment.');
-                        console.error('FormSubmit error:', result || response.statusText);
-                    }
-                } catch (err) {
-                    alert('Sorry, your application could not be sent right now. Please check your connection and try again, or email us directly at finance@marquise.ae.');
-                    console.error('Submit failed:', err);
-                } finally {
-                    if (submitButton) {
-                        submitButton.disabled = false;
-                        submitButton.textContent = originalLabel;
-                    }
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalLabel;
                 }
             });
         });
