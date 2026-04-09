@@ -49,3 +49,6 @@ LM Company Profile Photos/
 company-profile.html
 images/profile-stock/
 images/profile-photos/
+
+# Local-only document templates (job offer letters, etc.)
+templates/

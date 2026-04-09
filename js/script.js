@@ -39,17 +39,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const navMenu = document.getElementById('navMenu');
 
     if (menuToggle && navMenu) {
+        // Initial ARIA state
+        menuToggle.setAttribute('aria-controls', 'navMenu');
+        menuToggle.setAttribute('aria-expanded', 'false');
+
+        const setMenuOpen = (open) => {
+            menuToggle.classList.toggle('active', open);
+            navMenu.classList.toggle('active', open);
+            menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+            // Lock body scroll when mobile menu is open
+            document.body.style.overflow = open ? 'hidden' : '';
+        };
+
         menuToggle.addEventListener('click', function() {
-            menuToggle.classList.toggle('active');
-            navMenu.classList.toggle('active');
+            setMenuOpen(!navMenu.classList.contains('active'));
         });
 
         // Close menu when clicking a nav link
         const navLinks = navMenu.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
-                menuToggle.classList.remove('active');
-                navMenu.classList.remove('active');
+                setMenuOpen(false);
             });
         });
 
@@ -59,8 +70,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const isClickOnToggle = menuToggle.contains(event.target);
 
             if (!isClickInsideNav && !isClickOnToggle && navMenu.classList.contains('active')) {
-                menuToggle.classList.remove('active');
-                navMenu.classList.remove('active');
+                setMenuOpen(false);
+            }
+        });
+
+        // Escape key closes the menu
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && navMenu.classList.contains('active')) {
+                setMenuOpen(false);
+                menuToggle.focus();
             }
         });
     }
@@ -73,28 +91,55 @@ document.addEventListener('DOMContentLoaded', function() {
     const navItemDropdown = document.querySelector('.nav-item-dropdown');
 
     if (servicesToggle && navItemDropdown) {
-        // Show dropdown on hover only, allow click to navigate
-        navItemDropdown.addEventListener('mouseenter', function() {
-            navItemDropdown.classList.add('active');
+        // ARIA setup for screen reader support
+        servicesToggle.setAttribute('aria-haspopup', 'true');
+        servicesToggle.setAttribute('aria-expanded', 'false');
+
+        const setExpanded = (expanded) => {
+            navItemDropdown.classList.toggle('active', expanded);
+            servicesToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        };
+
+        // Detect if the device primarily uses touch input
+        const isTouchPrimary = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+        if (isTouchPrimary) {
+            // Touch / mobile: first tap opens dropdown, second tap navigates.
+            servicesToggle.addEventListener('click', function(e) {
+                if (!navItemDropdown.classList.contains('active')) {
+                    e.preventDefault();
+                    setExpanded(true);
+                }
+                // second tap when already open: let the link navigate.
+            });
+        } else {
+            // Desktop: hover opens dropdown.
+            navItemDropdown.addEventListener('mouseenter', () => setExpanded(true));
+            navItemDropdown.addEventListener('mouseleave', () => setExpanded(false));
+
+            // Keyboard support: open on focus
+            servicesToggle.addEventListener('focus', () => setExpanded(true));
+        }
+
+        // Close on Escape regardless of input mode
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && navItemDropdown.classList.contains('active')) {
+                setExpanded(false);
+                servicesToggle.focus();
+            }
         });
 
-        navItemDropdown.addEventListener('mouseleave', function() {
-            navItemDropdown.classList.remove('active');
-        });
-
-        // Close dropdown when clicking outside
+        // Close dropdown when clicking outside (any input mode)
         document.addEventListener('click', function(event) {
             if (!navItemDropdown.contains(event.target)) {
-                navItemDropdown.classList.remove('active');
+                setExpanded(false);
             }
         });
 
         // Close dropdown when a service is selected
         const dropdownLinks = navItemDropdown.querySelectorAll('.dropdown-menu a');
         dropdownLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                navItemDropdown.classList.remove('active');
-            });
+            link.addEventListener('click', () => setExpanded(false));
         });
     }
 
@@ -164,19 +209,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
 
     if (contactForm) {
-        contactForm.addEventListener('submit', function(event) {
-            event.preventDefault();
+        const iframe         = document.getElementById('contactSubmitFrame');
+        const subjectField   = document.getElementById('contactSubject');
+        const submitButton   = contactForm.querySelector('button[type="submit"]');
+        const originalLabel  = submitButton ? submitButton.textContent : '';
+        let awaitingResponse = false;
 
+        contactForm.addEventListener('submit', function(event) {
             // Clear previous errors
             clearErrors();
 
             // Get form values
             const firstName = document.getElementById('firstName').value.trim();
-            const lastName = document.getElementById('lastName').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const service = document.getElementById('service').value;
-            const message = document.getElementById('message').value.trim();
+            const lastName  = document.getElementById('lastName').value.trim();
+            const email     = document.getElementById('email').value.trim();
+            const phone     = document.getElementById('phone').value.trim();
+            const service   = document.getElementById('service').value;
+            const message   = document.getElementById('message').value.trim();
 
             let isValid = true;
 
@@ -216,33 +265,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 isValid = false;
             }
 
-            // If form is valid, show success message
-            if (isValid) {
-                // In a real application, you would send the data to a server here
-                console.log('Form submitted:', {
-                    firstName,
-                    lastName,
-                    email,
-                    phone,
-                    service,
-                    message
-                });
+            if (!isValid) {
+                event.preventDefault();
+                return;
+            }
 
-                // Show success message
+            // Build a descriptive subject line dynamically.
+            if (subjectField) {
+                subjectField.value =
+                    'Contact Message: ' + service + ' — ' + firstName + ' ' + lastName;
+            }
+
+            // Lock the button while we wait for the iframe to load.
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Sending...';
+            }
+            awaitingResponse = true;
+
+            // Do NOT preventDefault() — let the form submit naturally to the
+            // hidden iframe via its target attribute, so FormSubmit receives
+            // the multipart payload and emails it to finance@marquise.ae.
+        });
+
+        if (iframe) {
+            iframe.addEventListener('load', function() {
+                if (!awaitingResponse) return; // ignore initial blank load
+                awaitingResponse = false;
+
                 const successMessage = document.getElementById('formSuccess');
                 if (successMessage) {
                     successMessage.classList.add('visible');
+                    setTimeout(function() {
+                        successMessage.classList.remove('visible');
+                    }, 6000);
                 }
 
-                // Reset form
                 contactForm.reset();
 
-                // Hide success message after 5 seconds
-                setTimeout(function() {
-                    successMessage.classList.remove('visible');
-                }, 5000);
-            }
-        });
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalLabel;
+                }
+            });
+        }
 
         // Real-time validation on blur
         const formInputs = contactForm.querySelectorAll('.form-input');
@@ -485,7 +551,6 @@ document.addEventListener('DOMContentLoaded', function() {
  * );
  */
 function makeCarousel(rootEl, items, renderSlide) {
-    console.log('makeCarousel called with:', { rootEl, itemCount: items?.length });
 
     if (!rootEl || !items || items.length === 0) {
         console.error('Invalid carousel parameters', { rootEl, items });
@@ -496,7 +561,6 @@ function makeCarousel(rootEl, items, renderSlide) {
     const prevBtn = rootEl.querySelector('.arrow.prev');
     const nextBtn = rootEl.querySelector('.arrow.next');
 
-    console.log('Carousel elements found:', { track, prevBtn, nextBtn });
 
     if (!track) {
         console.error('Track element not found in', rootEl);
@@ -507,17 +571,14 @@ function makeCarousel(rootEl, items, renderSlide) {
 
     // Initialize: render all slides
     function init() {
-        console.log('Initializing carousel with', items.length, 'items');
         track.innerHTML = '';
         items.forEach((item, index) => {
             const slideDiv = document.createElement('div');
             slideDiv.className = 'slide';
             const html = renderSlide(item);
-            console.log(`Slide ${index} HTML:`, html);
             slideDiv.innerHTML = html;
             track.appendChild(slideDiv);
         });
-        console.log('Slides created, calling render()');
         render();
     }
 
@@ -526,7 +587,6 @@ function makeCarousel(rootEl, items, renderSlide) {
         const slides = track.querySelectorAll('.slide');
         const total = slides.length;
 
-        console.log(`Rendering: ${total} slides, currentIndex=${currentIndex}`);
 
         slides.forEach((slide, i) => {
             // Calculate relative position
@@ -537,19 +597,16 @@ function makeCarousel(rootEl, items, renderSlide) {
                 slide.style.transform = 'translateX(0%)';
                 slide.style.opacity = '1';
                 slide.style.zIndex = '2';
-                console.log(`Slide ${i}: ACTIVE (center, opacity 1)`);
             } else if (i === prevIndex) {
                 // Previous slide: to the left, faded
                 slide.style.transform = 'translateX(-100%)';
                 slide.style.opacity = '0.35';
                 slide.style.zIndex = '1';
-                console.log(`Slide ${i}: PREVIOUS (left, opacity 0.35)`);
             } else {
                 // All others: off to the right, hidden
                 slide.style.transform = 'translateX(100%)';
                 slide.style.opacity = '0';
                 slide.style.zIndex = '0';
-                console.log(`Slide ${i}: HIDDEN (right, opacity 0)`);
             }
         });
     }
@@ -889,9 +946,6 @@ function initLogoCarousel({ root, items, autoplay = false, interval = 5000 }) {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 CAROUSEL DOMContentLoaded FIRED!');
-    console.log('Current URL:', window.location.href);
-    console.log('DOM ready state:', document.readyState);
 
     // Data: Why La Marquise points
     const whyPoints = [
@@ -958,21 +1012,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Initialize all carousels
-    console.log('=== INITIALIZING CAROUSELS ===');
 
+    // Why La Marquise is now a static grid (see index.html .why-grid).
+    // The carousel data above is kept only as a fallback in case the
+    // grid is replaced with a carousel again on another page.
     const whyCarousel = document.getElementById('whyCarousel');
-    console.log('Why carousel element:', whyCarousel);
     if (whyCarousel) {
-        console.log('Creating Why carousel with', whyPoints.length, 'points');
         makeCarousel(whyCarousel, whyPoints, renderWhySlide);
-    } else {
-        console.error('whyCarousel element not found!');
     }
 
     const companiesCarousel = document.getElementById('companiesCarousel');
-    console.log('Companies carousel element:', companiesCarousel);
     if (companiesCarousel) {
-        console.log('Creating Logo carousel with', companies.length, 'companies');
         initLogoCarousel({
             root: '#companiesCarousel',
             items: companies,
@@ -984,15 +1034,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const servicesCarousel = document.getElementById('servicesCarousel');
-    console.log('Services carousel element:', servicesCarousel);
     if (servicesCarousel) {
-        console.log('Creating Services carousel with', services.length, 'services');
         makeCarousel(servicesCarousel, services, renderServiceSlide);
     } else {
         console.error('servicesCarousel element not found!');
     }
 
-    console.log('=== CAROUSEL INITIALIZATION COMPLETE ===');
 });
 
 // ========================================
@@ -1007,6 +1054,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const toggle = item.querySelector('.service-expand-toggle');
 
         if (header && toggle) {
+            // Initial ARIA state
+            header.setAttribute('role', 'button');
+            header.setAttribute('tabindex', '0');
+            if (!header.hasAttribute('aria-expanded')) {
+                header.setAttribute('aria-expanded', 'false');
+            }
+
+            const setExpanded = (expanded) => {
+                header.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                if (toggle) toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            };
+
             header.addEventListener('click', function(e) {
                 e.preventDefault();
 
@@ -1014,11 +1073,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 serviceItems.forEach(otherItem => {
                     if (otherItem !== item && otherItem.classList.contains('active')) {
                         otherItem.classList.remove('active');
+                        const otherHeader = otherItem.querySelector('.service-expandable-header');
+                        const otherToggle = otherItem.querySelector('.service-expand-toggle');
+                        if (otherHeader) otherHeader.setAttribute('aria-expanded', 'false');
+                        if (otherToggle) otherToggle.setAttribute('aria-expanded', 'false');
                     }
                 });
 
                 // Toggle current item
-                item.classList.toggle('active');
+                const willBeActive = !item.classList.contains('active');
+                item.classList.toggle('active', willBeActive);
+                setExpanded(willBeActive);
             });
 
             header.addEventListener('keydown', function(e) {
@@ -1027,8 +1092,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     header.click();
                 }
             });
-
-            header.setAttribute('tabindex', '0');
         }
     });
 });
@@ -1045,6 +1108,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const toggle = item.querySelector('.job-toggle');
 
         if (header && toggle) {
+            // Initial ARIA state
+            header.setAttribute('role', 'button');
+            header.setAttribute('tabindex', '0');
+            if (!header.hasAttribute('aria-expanded')) {
+                header.setAttribute('aria-expanded', 'false');
+            }
+            toggle.setAttribute('aria-expanded', 'false');
+
+            const setExpanded = (expanded) => {
+                header.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                toggle.setAttribute('aria-label', expanded ? 'Collapse job details' : 'Expand job details');
+            };
+
             // Add click handler to entire header
             header.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1053,11 +1130,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 jobItems.forEach(otherItem => {
                     if (otherItem !== item && otherItem.classList.contains('active')) {
                         otherItem.classList.remove('active');
+                        const otherHeader = otherItem.querySelector('.job-header');
+                        const otherToggle = otherItem.querySelector('.job-toggle');
+                        if (otherHeader) otherHeader.setAttribute('aria-expanded', 'false');
+                        if (otherToggle) {
+                            otherToggle.setAttribute('aria-expanded', 'false');
+                            otherToggle.setAttribute('aria-label', 'Expand job details');
+                        }
                     }
                 });
 
                 // Toggle current item
-                item.classList.toggle('active');
+                const willBeActive = !item.classList.contains('active');
+                item.classList.toggle('active', willBeActive);
+                setExpanded(willBeActive);
             });
 
             // Keyboard accessibility
@@ -1067,9 +1153,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     header.click();
                 }
             });
-
-            // Make header focusable
-            header.setAttribute('tabindex', '0');
         }
     });
 });

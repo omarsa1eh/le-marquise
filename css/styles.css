@@ -59,7 +59,10 @@
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: 100px;  /* offset for fixed navbar so anchored sections don't hide behind it */
     font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -69,8 +72,12 @@ body {
     color: var(--color-text);
     background-color: var(--color-background);
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
+/* Improve image rendering and prevent layout shift */
 img {
     max-width: 100%;
     height: auto;
@@ -92,6 +99,72 @@ button {
     background: none;
     cursor: pointer;
     font-family: inherit;
+}
+
+/* ========================================
+   Accessibility: Skip Link
+   ======================================== */
+
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 1rem;
+    z-index: 9999;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-primary);
+    color: #ffffff;
+    font-family: var(--font-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    transition: top 0.15s ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+    top: 1rem;
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+/* Visible focus rings for keyboard users on interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Visually hidden but accessible to screen readers */
+.sr-only {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 /* ========================================
@@ -2197,6 +2270,10 @@ p {
     line-height: 1.4;
 }
 
+.job-apply-btn {
+    margin-top: 1rem;
+}
+
 /* ========================================
    Responsive Design
    ======================================== */
@@ -2782,5 +2859,543 @@ p {
         --logo-max-h: 150px;
         --gap: 16px;
         --arrow-size: 36px;
+    }
+}
+
+/* ============================================================
+   AESTHETIC REFINEMENTS · 2026 modernisation pass
+   ------------------------------------------------------------
+   These rules sit at the end of the file so they layer on top
+   of the existing design system without rewriting it. They use
+   modern CSS features (text-wrap, color-mix, layered shadows,
+   cubic-bezier easings, focus-visible, prefers-reduced-motion)
+   that have wide browser support as of 2026.
+   ============================================================ */
+
+:root {
+    /* Refined easings */
+    --ease-out-quart:    cubic-bezier(0.165, 0.84, 0.44, 1);
+    --ease-out-expo:     cubic-bezier(0.19, 1, 0.22, 1);
+    --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+
+    /* Refined shadow stack — close shadow + ambient light fall */
+    --shadow-elev-1:
+        0 1px 2px rgba(42, 20, 64, 0.05),
+        0 2px 6px rgba(42, 20, 64, 0.04);
+    --shadow-elev-2:
+        0 2px 4px rgba(42, 20, 64, 0.06),
+        0 6px 18px rgba(42, 20, 64, 0.07);
+    --shadow-elev-3:
+        0 4px 10px rgba(42, 20, 64, 0.08),
+        0 16px 40px rgba(42, 20, 64, 0.10);
+    --shadow-elev-4:
+        0 8px 20px rgba(42, 20, 64, 0.10),
+        0 24px 60px rgba(42, 20, 64, 0.14);
+
+    /* Gold-tinted glow used on primary button hover */
+    --glow-gold: 0 0 0 1px rgba(201, 169, 97, 0.3),
+                 0 12px 28px -8px rgba(201, 169, 97, 0.45);
+
+    /* Hairline divider gradient */
+    --hairline-gold: linear-gradient(
+        90deg,
+        transparent,
+        rgba(168, 139, 74, 0.55) 20%,
+        rgba(168, 139, 74, 0.55) 80%,
+        transparent
+    );
+}
+
+/* ---------- Typography refinements ---------- */
+
+h1, h2, h3 {
+    text-wrap: balance;          /* prevents orphans on multi-line headlines */
+    letter-spacing: -0.01em;
+}
+
+p {
+    text-wrap: pretty;           /* improves rag and orphans in body copy */
+}
+
+.hero-title,
+.page-hero-title {
+    text-wrap: balance;
+    font-feature-settings: "liga" 1, "kern" 1;
+}
+
+/* ---------- Button refinements ---------- */
+
+.btn {
+    position: relative;
+    isolation: isolate;
+    transition:
+        transform 0.4s var(--ease-out-quart),
+        box-shadow 0.4s var(--ease-out-quart),
+        background-color 0.3s var(--ease-out-quart),
+        color 0.3s var(--ease-out-quart),
+        border-color 0.3s var(--ease-out-quart);
+    will-change: transform;
+}
+
+.btn-primary {
+    background-color: var(--color-accent);
+    box-shadow: var(--shadow-elev-1);
+}
+
+.btn-primary:hover {
+    background-color: color-mix(in srgb, var(--color-accent) 88%, white 12%);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elev-3), var(--glow-gold);
+}
+
+.btn-primary:active {
+    transform: translateY(-1px) scale(0.99);
+    box-shadow: var(--shadow-elev-1);
+    transition-duration: 0.1s;
+}
+
+.btn-secondary {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elev-2);
+}
+
+.btn-secondary:active {
+    transform: translateY(-1px) scale(0.99);
+    transition-duration: 0.1s;
+}
+
+/* ---------- Card refinements ---------- */
+
+.service-card,
+.benefit-card,
+.value-item,
+.mission-card,
+.feature-card,
+.contact-info-card,
+.contact-form-wrapper {
+    box-shadow: var(--shadow-elev-1);
+    transition:
+        transform 0.5s var(--ease-out-quart),
+        box-shadow 0.5s var(--ease-out-quart),
+        border-color 0.4s ease;
+}
+
+.service-card:hover,
+.benefit-card:hover,
+.value-item:hover,
+.feature-card:hover {
+    box-shadow: var(--shadow-elev-3);
+    transform: translateY(-6px);
+}
+
+/* Gold edge on hover for value/benefit cards */
+.value-item,
+.benefit-card,
+.mission-card {
+    border: 1px solid transparent;
+}
+
+.value-item:hover,
+.benefit-card:hover,
+.mission-card:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+
+/* ---------- Form input refinements ---------- */
+
+.form-input,
+.form-textarea,
+select.form-input {
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background-color 0.25s ease;
+}
+
+.form-input:hover:not(:focus):not(.error),
+select.form-input:hover:not(:focus):not(.error) {
+    border-color: color-mix(in srgb, var(--color-accent) 60%, var(--color-border));
+}
+
+.form-input:focus,
+.form-input:focus-visible,
+.form-textarea:focus,
+select.form-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow:
+        0 0 0 3px rgba(201, 169, 97, 0.18),
+        0 1px 2px rgba(42, 20, 64, 0.05);
+    background-color: #ffffff;
+}
+
+.form-input.error,
+.form-textarea.error {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: color-mix(in srgb, var(--color-text-light) 60%, transparent);
+    font-style: italic;
+}
+
+/* ---------- Image hover treatments ---------- */
+
+.content-img,
+.about-img,
+.service-card img,
+.feature-card img {
+    transition:
+        transform 0.7s var(--ease-out-expo),
+        filter 0.7s var(--ease-out-expo);
+}
+
+.content-img:hover,
+.about-img:hover {
+    transform: scale(1.02);
+    filter: brightness(1.04) saturate(1.05);
+}
+
+/* ---------- Animated link underlines ---------- */
+
+.nav-link {
+    position: relative;
+    overflow: visible;
+}
+
+.nav-link:not(.active)::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-accent) 30%,
+        var(--color-accent) 70%,
+        transparent
+    );
+    transition: width 0.4s var(--ease-out-quart), left 0.4s var(--ease-out-quart);
+}
+
+.nav-link:not(.active):hover::after,
+.nav-link:not(.active):focus-visible::after {
+    width: 100%;
+    left: 0;
+}
+
+/* Footer links inherit a subtle version of the same animation */
+.footer-links a {
+    position: relative;
+    transition: color 0.3s ease, padding-left 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--color-accent);
+    padding-left: 6px;
+}
+
+/* ---------- Section dividers / hairlines ---------- */
+
+.section + .section,
+.section + .section-light,
+.section + .section-dark,
+.section-light + .section,
+.section-dark + .section {
+    position: relative;
+}
+
+/* Refined section title underline accent */
+.section-title {
+    position: relative;
+    text-wrap: balance;
+}
+
+.section-title::after {
+    content: "";
+    display: block;
+    width: 64px;
+    height: 3px;
+    margin: 1rem auto 0;
+    background: linear-gradient(
+        90deg,
+        var(--color-accent),
+        color-mix(in srgb, var(--color-accent) 50%, transparent)
+    );
+    border-radius: 2px;
+}
+
+/* ---------- Hero / slideshow refinements ---------- */
+
+.hero-slide {
+    transition: opacity 1.4s var(--ease-in-out-cubic);
+}
+
+.hero-overlay {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(42, 20, 64, 0.35) 0%,
+            rgba(42, 20, 64, 0.55) 100%
+        );
+    transition: background 1s ease;
+}
+
+.hero-content {
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- Carousel arrow refinements ---------- */
+
+.carousel .arrow {
+    transition:
+        transform 0.4s var(--ease-out-quart),
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.carousel .arrow:hover {
+    transform: scale(1.08);
+    box-shadow: var(--shadow-elev-2);
+}
+
+.carousel .arrow:active {
+    transform: scale(0.96);
+    transition-duration: 0.1s;
+}
+
+/* ---------- Navbar refinements ---------- */
+
+.navbar {
+    transition:
+        background-color 0.4s var(--ease-out-quart),
+        box-shadow 0.4s var(--ease-out-quart),
+        backdrop-filter 0.4s ease;
+}
+
+.navbar.scrolled {
+    background-color: rgba(255, 255, 255, 0.96);
+    box-shadow:
+        0 1px 0 rgba(168, 139, 74, 0.15),
+        0 4px 18px rgba(42, 20, 64, 0.06);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+/* ---------- Footer subtle gold top accent ---------- */
+
+.footer {
+    position: relative;
+}
+
+.footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(80%, 800px);
+    height: 1px;
+    background: var(--hairline-gold);
+}
+
+/* ---------- Smooth fade-in refinements ---------- */
+
+.fade-in,
+.fade-in-delay,
+.fade-in-delay-2 {
+    animation-timing-function: var(--ease-out-expo);
+}
+
+.reveal {
+    transition:
+        opacity 0.9s var(--ease-out-quart),
+        transform 0.9s var(--ease-out-quart);
+}
+
+/* ---------- Scrollbar styling (WebKit / Blink) ---------- */
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+::-webkit-scrollbar-track {
+    background: #f5f1e6;
+}
+::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-accent) 70%, var(--color-primary) 30%);
+    border-radius: 6px;
+    border: 2px solid #f5f1e6;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent);
+}
+
+/* Selection color */
+::selection {
+    background: color-mix(in srgb, var(--color-accent) 60%, transparent);
+    color: var(--color-primary);
+}
+
+/* ---------- Why La Marquise — static 4-card grid ---------- */
+
+.why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.75rem;
+    margin-top: 3.5rem;
+    align-items: stretch;
+}
+
+.why-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem 1.75rem 2rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(201, 169, 97, 0.22);
+    border-top: 3px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition:
+        transform 0.5s var(--ease-out-quart),
+        background 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.5s var(--ease-out-quart);
+}
+
+.why-card:hover {
+    transform: translateY(-6px);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(201, 169, 97, 0.18);
+}
+
+.why-card .why-number {
+    font-family: var(--font-primary);
+    font-size: 2.75rem;
+    line-height: 1;
+    color: var(--color-accent);
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.02em;
+    font-weight: 400;
+}
+
+.why-card h3 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    line-height: 1.3;
+    margin-bottom: 0.85rem;
+    text-wrap: balance;
+}
+
+.why-card p {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    margin: 0;
+    flex: 1;
+}
+
+@media (max-width: 992px) {
+    .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .why-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    .why-card {
+        padding: 2rem 1.5rem 1.75rem;
+    }
+    .why-card .why-number {
+        font-size: 2.25rem;
+    }
+}
+
+/* ---------- Services carousel arrows — match Companies arrow style ---------- */
+
+.carousel .arrow {
+    /* Reset the old transparent text-only style */
+    background: #ffffff;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    color: var(--color-primary);
+    box-shadow:
+        0 2px 8px rgba(42, 20, 64, 0.12),
+        0 1px 2px rgba(42, 20, 64, 0.08);
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.4s var(--ease-out-quart);
+}
+
+.carousel .arrow:hover {
+    background: var(--color-primary);
+    color: #ffffff;
+    transform: translateY(-50%) scale(1.06);
+    box-shadow:
+        0 6px 18px rgba(42, 20, 64, 0.22),
+        0 2px 6px rgba(42, 20, 64, 0.12);
+}
+
+.carousel .arrow:active {
+    transform: translateY(-50%) scale(0.96);
+    transition-duration: 0.1s;
+}
+
+.carousel .arrow svg {
+    width: 22px;
+    height: 22px;
+    filter: none;            /* drop-shadow no longer needed on white pill */
+}
+
+/* On dark sections, the white pill stays — no override needed */
+
+/* ---------- Print refinements ---------- */
+
+@media print {
+    .navbar,
+    .footer,
+    .skip-link,
+    .carousel .arrow,
+    .menu-toggle {
+        display: none !important;
+    }
+    body {
+        background: white;
+        color: black;
+    }
+    .section,
+    .page-hero {
+        page-break-inside: avoid;
+    }
+    a::after {
+        content: " (" attr(href) ")";
+        font-size: 0.85em;
+        color: #555;
+    }
+    a[href^="#"]::after,
+    a[href^="javascript"]::after {
+        content: "";
     }
 }
