@@ -50,5 +50,35 @@ company-profile.html
 images/profile-stock/
 images/profile-photos/
 
-# Local-only document templates (job offer letters, etc.)
+# Local-only document templates
+# (contracts, LPOs, snag lists, job offer letters, authorization letters, etc.)
 templates/
+
+# Confidential stamps / signatures — never commit
+LM Stamp.jpeg
+*Stamp*.jpeg
+*Stamp*.jpg
+*Stamp*.png
+*Signature*.jpeg
+*Signature*.jpg
+*Signature*.png
+
+# Defensive: block document files at repo ROOT only (subfolders unaffected).
+# The website itself only contains .html/.css/.js/.png/.ico/.jpg in image dirs,
+# so any of these turning up at root is almost certainly a confidential doc.
+/*.pdf
+/*.xlsx
+/*.xls
+/*.xlsm
+/*.docx
+/*.doc
+/*.pptx
+/*.ppt
+/*.heic
+/*.zip
+/*.rar
+/*.7z
+
+# Loose images at root (favicon.png/ico are tracked explicitly above)
+/*.jpeg
+/*.JPEG
