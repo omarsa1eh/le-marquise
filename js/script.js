@@ -1108,7 +1108,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const GRID_SELECTORS = [
         '.service-cards',
         '.services-grid',
-        '.engage-timeline',
         '.why-grid',
         '.values-grid',
         '.benefits-grid',
@@ -1309,6 +1308,54 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }, { passive: true });
+});
+
+// ========================================
+// Page Map — Section Dot Navigator
+// ========================================
+// Builds a fixed column of dots (one per section that declares
+// data-spy-label) that travels with you down the page, highlights
+// the section currently in view, and jumps on click.
+
+document.addEventListener('DOMContentLoaded', function() {
+    const spySections = Array.from(document.querySelectorAll('[data-spy-label]'))
+        .filter(sec => sec.id);
+    if (spySections.length < 3 || !('IntersectionObserver' in window)) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const nav = document.createElement('nav');
+    nav.className = 'section-spy';
+    nav.setAttribute('aria-label', 'Page map');
+
+    const dots = new Map();
+
+    spySections.forEach(sec => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'spy-dot';
+        dot.dataset.label = sec.dataset.spyLabel;
+        dot.setAttribute('aria-label', 'Go to ' + sec.dataset.spyLabel);
+        dot.addEventListener('click', function() {
+            sec.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+        });
+        nav.appendChild(dot);
+        dots.set(sec, dot);
+    });
+
+    document.body.appendChild(nav);
+
+    // A section is "current" while it crosses the middle band of the
+    // viewport; the matching dot lights up gold.
+    const spyObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            dots.forEach(d => d.classList.remove('is-active'));
+            dots.get(entry.target).classList.add('is-active');
+        });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+
+    spySections.forEach(sec => spyObserver.observe(sec));
 });
 
 // ========================================

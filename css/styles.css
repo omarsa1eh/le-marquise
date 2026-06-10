@@ -3502,8 +3502,12 @@ h3 { font-size: clamp(1.625rem, 3vw, 2.125rem); }
 .hero-scroll-cue {
     position: absolute;
     bottom: clamp(1.25rem, 4vh, 2.5rem);
-    left: 50%;
-    transform: translateX(-50%);
+    /* centered via inset + auto margins — the fadeIn animation animates
+       `transform`, which would override transform-based centering */
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    width: max-content;
     z-index: 4;
     display: flex;
     flex-direction: column;
@@ -4041,132 +4045,6 @@ h3 { font-size: clamp(1.625rem, 3vw, 2.125rem); }
     }
 }
 
-/* ---------- How We Engage timeline ---------- */
-
-.engage-timeline {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--spacing-md);
-    margin-top: calc(var(--spacing-lg) + 0.5rem);
-    position: relative;
-}
-
-/* connecting line behind the markers */
-.engage-timeline::before {
-    content: "";
-    position: absolute;
-    top: 28px;
-    left: calc(12.5% + 28px);
-    right: calc(12.5% + 28px);
-    height: 1px;
-    background: linear-gradient(
-        90deg,
-        rgba(201, 169, 97, 0.15),
-        rgba(201, 169, 97, 0.6) 50%,
-        rgba(201, 169, 97, 0.15)
-    );
-}
-
-.engage-step {
-    text-align: center;
-    position: relative;
-}
-
-.engage-marker {
-    position: relative;
-    z-index: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--color-background);
-    border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
-    box-shadow: var(--shadow-elev-1);
-    margin-bottom: 1.1rem;
-    transition:
-        transform 0.5s var(--ease-out-quart),
-        background 0.4s ease,
-        box-shadow 0.5s var(--ease-out-quart);
-}
-
-.engage-marker span {
-    font-family: var(--font-primary);
-    font-style: italic;
-    font-size: 1.2rem;
-    color: var(--color-accent);
-    transition: color 0.4s ease;
-}
-
-.engage-step:hover .engage-marker {
-    transform: translateY(-4px) scale(1.06);
-    background: var(--color-primary);
-    box-shadow: var(--shadow-elev-3);
-}
-
-.engage-step:hover .engage-marker span {
-    color: var(--color-accent-light);
-}
-
-.engage-step h3 {
-    font-size: 1.35rem;
-    margin-bottom: 0.4rem;
-}
-
-.engage-step p {
-    font-size: 0.875rem;
-    line-height: 1.65;
-    color: var(--color-text-light);
-    max-width: 240px;
-    margin: 0 auto;
-}
-
-@media (max-width: 900px) {
-    .engage-timeline {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-md);
-        max-width: 420px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    /* vertical connector on phones */
-    .engage-timeline::before {
-        top: 28px;
-        bottom: 28px;
-        left: 28px;
-        right: auto;
-        width: 1px;
-        height: auto;
-        background: linear-gradient(
-            180deg,
-            rgba(201, 169, 97, 0.15),
-            rgba(201, 169, 97, 0.6) 50%,
-            rgba(201, 169, 97, 0.15)
-        );
-    }
-
-    .engage-step {
-        display: grid;
-        grid-template-columns: 56px 1fr;
-        column-gap: 1.25rem;
-        text-align: left;
-        align-items: start;
-    }
-
-    .engage-marker {
-        grid-row: 1 / span 2;
-        margin-bottom: 0;
-    }
-
-    .engage-step p {
-        grid-column: 2;
-        margin: 0;
-        max-width: none;
-    }
-}
-
 /* ---------- FAQ section ---------- */
 
 .faq-section {
@@ -4267,6 +4145,113 @@ h3 { font-size: clamp(1.625rem, 3vw, 2.125rem); }
 @media print {
     .fab-stack,
     .scroll-progress {
+        display: none !important;
+    }
+}
+
+/* ---------- Page map — section dot navigator (JS-injected) ---------- */
+
+.section-spy {
+    position: fixed;
+    right: clamp(1rem, 2.2vw, 1.9rem);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    z-index: 950;
+}
+
+/* faint vertical guide line behind the dots */
+.section-spy::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    bottom: -14px;
+    left: 50%;
+    width: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(201, 169, 97, 0.4) 20%,
+        rgba(201, 169, 97, 0.4) 80%,
+        transparent
+    );
+    pointer-events: none;
+}
+
+.spy-dot {
+    position: relative;
+    width: 11px;
+    height: 11px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1.5px solid color-mix(in srgb, var(--color-accent) 75%, #7a6434);
+    background: var(--color-background);
+    cursor: pointer;
+    transition:
+        transform 0.35s var(--ease-out-quart),
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.35s ease;
+}
+
+.spy-dot:hover {
+    transform: scale(1.35);
+    border-color: var(--color-accent);
+}
+
+.spy-dot.is-active {
+    background: linear-gradient(135deg, var(--color-accent-light), var(--color-accent));
+    border-color: var(--color-accent);
+    transform: scale(1.25);
+    box-shadow: 0 0 0 4px rgba(201, 169, 97, 0.22);
+}
+
+/* serif label that slides out on hover / focus / active */
+.spy-dot::after {
+    content: attr(data-label);
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%) translateX(6px);
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1;
+    color: var(--color-primary);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(201, 169, 97, 0.35);
+    border-radius: 99px;
+    padding: 0.45em 0.95em;
+    white-space: nowrap;
+    box-shadow: var(--shadow-elev-1);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        opacity 0.3s ease,
+        transform 0.4s var(--ease-out-quart);
+}
+
+.spy-dot:hover::after,
+.spy-dot:focus-visible::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* hide on tablets / phones — too little room next to content */
+@media (max-width: 1180px) {
+    .section-spy {
+        display: none;
+    }
+}
+
+@media print {
+    .section-spy {
         display: none !important;
     }
 }
