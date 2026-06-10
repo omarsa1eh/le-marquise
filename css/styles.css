@@ -3825,6 +3825,452 @@ h3 { font-size: clamp(1.625rem, 3vw, 2.125rem); }
     color: rgba(255, 255, 255, 0.75);
 }
 
+/* ============================================================
+   FABLE 5 REFRESH · PHASE 2 — new homepage components
+   ============================================================ */
+
+/* ---------- Services grid (replaces one-at-a-time carousel) ---------- */
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(216px, 1fr));
+    gap: 1.25rem;
+    margin-top: var(--spacing-md);
+}
+
+.svc-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 1.5rem 1.5rem;
+    background: var(--color-background);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 18%, transparent);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-elev-1);
+    overflow: hidden;
+    transition:
+        transform 0.5s var(--ease-out-quart),
+        box-shadow 0.5s var(--ease-out-quart),
+        border-color 0.4s ease;
+}
+
+/* Gold bar that draws across the top on hover */
+.svc-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-accent-light), var(--color-accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease-out-quart);
+}
+
+.svc-card:hover,
+.svc-card:focus-visible {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-elev-3);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
+.svc-card:hover::before,
+.svc-card:focus-visible::before {
+    transform: scaleX(1);
+}
+
+.svc-num {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.25rem;
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+
+.svc-icon {
+    display: inline-flex;
+    color: var(--color-accent);
+    margin-bottom: 0.9rem;
+    transition: transform 0.5s var(--ease-out-quart);
+}
+
+.svc-card:hover .svc-icon {
+    transform: translateY(-3px) scale(1.08);
+}
+
+.svc-title {
+    font-size: 1.3rem;
+    line-height: 1.25;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    text-wrap: balance;
+}
+
+.svc-desc {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--color-text-light);
+    margin-bottom: 1rem;
+    flex: 1;
+}
+
+.svc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+}
+
+.svc-link svg {
+    transition: transform 0.4s var(--ease-out-quart);
+}
+
+.svc-card:hover .svc-link svg {
+    transform: translateX(5px);
+}
+
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.875rem;
+    }
+
+    .svc-card {
+        padding: 1.25rem 1rem 1rem;
+    }
+
+    .svc-desc {
+        display: none;    /* keep cards compact on phones */
+    }
+
+    .svc-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Trusted institutions marquee ---------- */
+
+.trust-strip {
+    background: var(--color-background-light);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border-section) 35%, transparent);
+    padding: 1.5rem 0 1.6rem;
+    overflow: hidden;
+}
+
+.trust-label {
+    text-align: center;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-bottom: 1rem;
+}
+
+.trust-marquee {
+    position: relative;
+    overflow: hidden;
+    /* soft fade at both edges */
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.trust-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    gap: 3.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .trust-track.is-animated {
+        animation: trust-scroll 36s linear infinite;
+    }
+
+    .trust-marquee:hover .trust-track.is-animated {
+        animation-play-state: paused;
+    }
+
+    @keyframes trust-scroll {
+        from { transform: translateX(0); }
+        to   { transform: translateX(-50%); }
+    }
+}
+
+.trust-item {
+    position: relative;
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-size: 1.25rem;
+    color: color-mix(in srgb, var(--color-primary) 72%, transparent);
+    white-space: nowrap;
+}
+
+.trust-item::after {
+    content: "\25C6";    /* small diamond */
+    font-style: normal;
+    font-size: 0.45rem;
+    color: var(--color-accent);
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* If reduced motion (no marquee), wrap gracefully */
+@media (prefers-reduced-motion: reduce) {
+    .trust-track {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        gap: 1rem 3.5rem;
+    }
+}
+
+/* ---------- How We Engage timeline ---------- */
+
+.engage-timeline {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    margin-top: calc(var(--spacing-lg) + 0.5rem);
+    position: relative;
+}
+
+/* connecting line behind the markers */
+.engage-timeline::before {
+    content: "";
+    position: absolute;
+    top: 28px;
+    left: calc(12.5% + 28px);
+    right: calc(12.5% + 28px);
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        rgba(201, 169, 97, 0.15),
+        rgba(201, 169, 97, 0.6) 50%,
+        rgba(201, 169, 97, 0.15)
+    );
+}
+
+.engage-step {
+    text-align: center;
+    position: relative;
+}
+
+.engage-marker {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-background);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+    box-shadow: var(--shadow-elev-1);
+    margin-bottom: 1.1rem;
+    transition:
+        transform 0.5s var(--ease-out-quart),
+        background 0.4s ease,
+        box-shadow 0.5s var(--ease-out-quart);
+}
+
+.engage-marker span {
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--color-accent);
+    transition: color 0.4s ease;
+}
+
+.engage-step:hover .engage-marker {
+    transform: translateY(-4px) scale(1.06);
+    background: var(--color-primary);
+    box-shadow: var(--shadow-elev-3);
+}
+
+.engage-step:hover .engage-marker span {
+    color: var(--color-accent-light);
+}
+
+.engage-step h3 {
+    font-size: 1.35rem;
+    margin-bottom: 0.4rem;
+}
+
+.engage-step p {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--color-text-light);
+    max-width: 240px;
+    margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+    .engage-timeline {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+        max-width: 420px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* vertical connector on phones */
+    .engage-timeline::before {
+        top: 28px;
+        bottom: 28px;
+        left: 28px;
+        right: auto;
+        width: 1px;
+        height: auto;
+        background: linear-gradient(
+            180deg,
+            rgba(201, 169, 97, 0.15),
+            rgba(201, 169, 97, 0.6) 50%,
+            rgba(201, 169, 97, 0.15)
+        );
+    }
+
+    .engage-step {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        column-gap: 1.25rem;
+        text-align: left;
+        align-items: start;
+    }
+
+    .engage-marker {
+        grid-row: 1 / span 2;
+        margin-bottom: 0;
+    }
+
+    .engage-step p {
+        grid-column: 2;
+        margin: 0;
+        max-width: none;
+    }
+}
+
+/* ---------- FAQ section ---------- */
+
+.faq-section {
+    background-color: var(--color-background-light);
+}
+
+.faq-section .service-expandable-header h3 {
+    font-family: var(--font-secondary);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+
+.faq-section .service-expandable-header h3::before {
+    content: "Q ";
+    color: var(--color-accent);
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-weight: 600;
+    margin-right: 0.6rem;
+}
+
+/* ---------- Scroll progress bar (site-wide, JS-injected) ---------- */
+
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--color-accent-light), var(--color-accent));
+    transform-origin: left;
+    transform: scaleX(0);
+    z-index: 1100;
+    pointer-events: none;
+}
+
+/* ---------- Floating action buttons (site-wide, JS-injected) ---------- */
+
+.fab-stack {
+    position: fixed;
+    right: clamp(1rem, 3vw, 1.75rem);
+    bottom: clamp(1rem, 3vw, 1.75rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 1050;
+}
+
+.fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    box-shadow: var(--shadow-elev-3);
+    transition:
+        transform 0.4s var(--ease-out-quart),
+        box-shadow 0.4s var(--ease-out-quart),
+        opacity 0.35s ease,
+        visibility 0.35s ease;
+}
+
+.fab:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: var(--shadow-elev-4);
+}
+
+.fab:active {
+    transform: scale(0.96);
+    transition-duration: 0.1s;
+}
+
+.fab-whatsapp {
+    background: #25d366;    /* official WhatsApp green — instantly recognisable */
+    color: #ffffff;
+}
+
+.fab-whatsapp:hover {
+    background: #1ebe5b;
+}
+
+.fab-top {
+    background: var(--color-primary);
+    color: var(--color-accent);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.fab-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+@media print {
+    .fab-stack,
+    .scroll-progress {
+        display: none !important;
+    }
+}
+
 /* ---------- Print refinements ---------- */
 
 @media print {

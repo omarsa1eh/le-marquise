@@ -1029,15 +1029,13 @@ document.addEventListener('DOMContentLoaded', function() {
             autoplay: false,
             interval: 5000
         });
-    } else {
-        console.error('companiesCarousel element not found!');
     }
 
+    // Homepage services are now a static grid (.services-grid); this
+    // only runs if a services carousel is reintroduced somewhere.
     const servicesCarousel = document.getElementById('servicesCarousel');
     if (servicesCarousel) {
         makeCarousel(servicesCarousel, services, renderServiceSlide);
-    } else {
-        console.error('servicesCarousel element not found!');
     }
 
 });
@@ -1109,6 +1107,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const GRID_SELECTORS = [
         '.service-cards',
+        '.services-grid',
+        '.engage-timeline',
         '.why-grid',
         '.values-grid',
         '.benefits-grid',
@@ -1226,6 +1226,89 @@ document.addEventListener('DOMContentLoaded', function() {
     }, { threshold: 0.5 });
 
     counters.forEach(el => countObserver.observe(el));
+});
+
+// ========================================
+// Trusted Institutions Marquee
+// ========================================
+// Duplicates the track content once so the CSS keyframe loop
+// (translateX -50%) is seamless. Skipped under reduced motion,
+// where the names simply wrap as a static centered list.
+
+document.addEventListener('DOMContentLoaded', function() {
+    const track = document.getElementById('trustTrack');
+    if (!track) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    track.innerHTML += track.innerHTML;
+    track.classList.add('is-animated');
+});
+
+// ========================================
+// Scroll Progress Bar (site-wide)
+// ========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const bar = document.createElement('div');
+    bar.className = 'scroll-progress';
+    bar.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(bar);
+
+    let ticking = false;
+
+    function updateProgress() {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const ratio = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
+        bar.style.transform = 'scaleX(' + ratio + ')';
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(updateProgress);
+        }
+    }, { passive: true });
+
+    updateProgress();
+});
+
+// ========================================
+// Floating Action Buttons (site-wide)
+// ========================================
+// WhatsApp quick-chat plus back-to-top, injected on every page.
+
+document.addEventListener('DOMContentLoaded', function() {
+    const stack = document.createElement('div');
+    stack.className = 'fab-stack';
+    stack.innerHTML =
+        '<button type="button" class="fab fab-top" aria-label="Back to top">' +
+            '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>' +
+        '</button>' +
+        '<a class="fab fab-whatsapp" target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp" ' +
+            'href="https://wa.me/971503669331?text=' + encodeURIComponent('Hello La Marquise Group, I would like to enquire about your services.') + '">' +
+            '<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.89 1.22 3.09.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35zM12.04 21.5h-.01a9.4 9.4 0 0 1-4.8-1.31l-.34-.2-3.56.93.95-3.47-.22-.36a9.42 9.42 0 0 1-1.44-5.03c0-5.21 4.24-9.44 9.46-9.44a9.4 9.4 0 0 1 6.68 2.77 9.38 9.38 0 0 1 2.77 6.68c0 5.21-4.24 9.44-9.45 9.44zm8.04-17.49A11.32 11.32 0 0 0 12.04 .67C5.77.67.66 5.78.66 12.05c0 2 .52 3.96 1.52 5.69L.57 23.33l5.73-1.5a11.38 11.38 0 0 0 5.73 1.54h.01c6.27 0 11.38-5.11 11.38-11.38 0-3.04-1.18-5.9-3.34-8.05z"/></svg>' +
+        '</a>';
+    document.body.appendChild(stack);
+
+    const topBtn = stack.querySelector('.fab-top');
+
+    topBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    let topTicking = false;
+    window.addEventListener('scroll', function() {
+        if (!topTicking) {
+            topTicking = true;
+            requestAnimationFrame(function() {
+                topBtn.classList.toggle('is-visible', window.scrollY > 600);
+                topTicking = false;
+            });
+        }
+    }, { passive: true });
 });
 
 // ========================================
