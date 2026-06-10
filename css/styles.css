@@ -22,7 +22,7 @@
     --color-error: #ef4444;
 
     /* Typography */
-    --font-primary: 'Georgia', 'Times New Roman', serif;
+    --font-primary: 'Cormorant Garamond', 'Georgia', 'Times New Roman', serif;
     --font-secondary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
 
     /* Spacing */
@@ -3370,6 +3370,460 @@ select.form-input:focus {
 }
 
 /* On dark sections, the white pill stays — no override needed */
+
+/* ============================================================
+   FABLE 5 REFRESH · 2026
+   ------------------------------------------------------------
+   A bolder modernisation layer: Cormorant Garamond display
+   typography, cross-document view transitions, Ken Burns hero,
+   scroll-driven reveals, gold shine micro-interactions, stats
+   band, and ambient section texture. Sits last in the cascade.
+   ============================================================ */
+
+/* ---------- Cross-document page transitions (MPA) ---------- */
+
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root) {
+    animation-duration: 0.22s;
+}
+
+::view-transition-new(root) {
+    animation-duration: 0.3s;
+}
+
+/* Keep the fixed navbar steady while the page content fades */
+.navbar {
+    view-transition-name: site-nav;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    @view-transition {
+        navigation: none;
+    }
+}
+
+/* ---------- Display typography: Cormorant Garamond ---------- */
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: 0.005em;
+}
+
+/* Cormorant runs visually smaller than Georgia — compensate */
+h1 { font-size: clamp(2.75rem, 5.5vw, 4.5rem); }
+h2 { font-size: clamp(2.125rem, 4vw, 3.25rem); }
+h3 { font-size: clamp(1.625rem, 3vw, 2.125rem); }
+
+.hero-title {
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.12;
+}
+
+/* Gold gradient accent word inside the hero title */
+.hero-title-accent {
+    font-style: italic;
+    font-weight: 600;
+    background: linear-gradient(
+        100deg,
+        #e8d6a4 0%,
+        var(--color-accent) 45%,
+        #a88b4a 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    padding-right: 0.06em;    /* room for the italic overhang */
+}
+
+/* Eyebrow line above the hero title */
+.hero-eyebrow {
+    font-family: var(--font-secondary);
+    font-size: clamp(0.7rem, 1.2vw, 0.8125rem);
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-accent-light);
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    animation: fadeIn 0.8s var(--ease-out-expo) 0.1s forwards;
+}
+
+.hero-eyebrow::before,
+.hero-eyebrow::after {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    width: clamp(20px, 4vw, 44px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-accent-light));
+    margin: 0 0.9em 0.2em 0;
+}
+
+.hero-eyebrow::after {
+    background: linear-gradient(90deg, var(--color-accent-light), transparent);
+    margin: 0 0 0.2em 0.9em;
+}
+
+/* ---------- Ken Burns hero slideshow ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+    .hero-slide.active {
+        animation: kenburns 9s var(--ease-out-quart) both;
+    }
+
+    @keyframes kenburns {
+        from { transform: scale(1.08); }
+        to   { transform: scale(1); }
+    }
+}
+
+/* Richer cinematic overlay: vignette + brand tint */
+.hero-overlay {
+    background:
+        radial-gradient(
+            120% 90% at 50% 10%,
+            rgba(42, 20, 64, 0.18) 0%,
+            rgba(42, 20, 64, 0.42) 70%,
+            rgba(20, 8, 34, 0.62) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(42, 20, 64, 0.38) 0%,
+            rgba(42, 20, 64, 0.5) 100%
+        );
+}
+
+/* Scroll cue at the bottom of the hero */
+.hero-scroll-cue {
+    position: absolute;
+    bottom: clamp(1.25rem, 4vh, 2.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-family: var(--font-secondary);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.4s forwards;
+    transition: color 0.3s ease;
+}
+
+.hero-scroll-cue:hover {
+    color: var(--color-accent-light);
+}
+
+.hero-scroll-cue svg {
+    display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .hero-scroll-cue svg {
+        animation: cue-bob 2.2s var(--ease-in-out-cubic) infinite;
+    }
+
+    @keyframes cue-bob {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(7px); }
+    }
+}
+
+/* ---------- Shrinking glass navbar ---------- */
+
+.logo-image {
+    transition: height 0.45s var(--ease-out-quart), opacity 0.3s ease;
+}
+
+.navbar.scrolled .logo-image {
+    height: 62px;
+}
+
+@media (max-width: 768px) {
+    .logo-image {
+        height: 64px;
+    }
+
+    .navbar.scrolled .logo-image {
+        height: 52px;
+    }
+}
+
+/* ---------- Gold shine sweep on primary buttons ---------- */
+
+.btn {
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: linear-gradient(
+        135deg,
+        var(--color-accent-light) 0%,
+        var(--color-accent) 55%,
+        #b8923f 100%
+    );
+}
+
+.btn-primary::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        105deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.38) 50%,
+        transparent 65%
+    );
+    transform: translateX(-130%);
+}
+
+.btn-primary:hover::before,
+.btn-primary:focus-visible::before {
+    transition: transform 0.7s var(--ease-out-quart);
+    transform: translateX(130%);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(
+        135deg,
+        #e0c684 0%,
+        var(--color-accent-light) 55%,
+        var(--color-accent) 100%
+    );
+}
+
+/* ---------- Ambient section texture ---------- */
+
+.section-light,
+.companies-section {
+    background-color: var(--color-background-light);
+    background-image:
+        radial-gradient(
+            55% 45% at 8% 0%,
+            rgba(201, 169, 97, 0.07) 0%,
+            transparent 100%
+        ),
+        radial-gradient(
+            50% 40% at 96% 100%,
+            rgba(61, 31, 92, 0.05) 0%,
+            transparent 100%
+        );
+}
+
+.section-dark {
+    background-image:
+        radial-gradient(
+            70% 60% at 85% 0%,
+            rgba(201, 169, 97, 0.1) 0%,
+            transparent 100%
+        ),
+        radial-gradient(
+            60% 50% at 10% 100%,
+            rgba(255, 255, 255, 0.04) 0%,
+            transparent 100%
+        );
+}
+
+.page-hero {
+    background:
+        radial-gradient(
+            80% 100% at 80% 0%,
+            rgba(201, 169, 97, 0.16) 0%,
+            transparent 60%
+        ),
+        linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+}
+
+/* Gold flourish under the page-hero title */
+.page-hero-title::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 2px;
+    margin: 1.1rem auto 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-accent) 30%,
+        var(--color-accent) 70%,
+        transparent
+    );
+}
+
+/* ---------- Section title flourish: diamond + lines ---------- */
+
+.section-title::after {
+    width: 88px;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-accent) 25%,
+        var(--color-accent) 75%,
+        transparent
+    );
+}
+
+/* ---------- Stats band (homepage) ---------- */
+
+.stats-band {
+    background:
+        radial-gradient(
+            90% 130% at 50% -30%,
+            rgba(201, 169, 97, 0.12) 0%,
+            transparent 60%
+        ),
+        linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    border-top: 3px solid var(--color-border-section);
+    border-bottom: 3px solid var(--color-border-section);
+    padding: calc(var(--spacing-lg) + 0.5rem) 0;
+}
+
+.section-dark + .stats-band {
+    border-top: none;
+}
+
+.stats-band .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    text-align: center;
+}
+
+.stats-band .stat-item {
+    padding: var(--spacing-sm);
+    position: relative;
+}
+
+.stats-band .stat-item + .stat-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 56px;
+    width: 1px;
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(201, 169, 97, 0.4),
+        transparent
+    );
+}
+
+.stats-band .stat-number {
+    font-family: var(--font-primary);
+    font-size: clamp(2.5rem, 4.5vw, 3.75rem);
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.stats-band .stat-number .stat-suffix {
+    color: var(--color-accent);
+    font-style: italic;
+}
+
+.stats-band .stat-label {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+    .stats-band .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md) var(--spacing-sm);
+    }
+
+    /* Only keep the divider between columns, not across rows */
+    .stats-band .stat-item:nth-child(3)::before {
+        display: none;
+    }
+}
+
+/* ---------- Why-card top rule becomes a gradient ---------- */
+
+.why-card {
+    border-top: 3px solid transparent;
+    border-image: linear-gradient(
+        90deg,
+        var(--color-accent-light),
+        var(--color-accent) 50%,
+        rgba(201, 169, 97, 0.25)
+    ) 1;
+    border-left: 1px solid rgba(201, 169, 97, 0.22);
+    border-right: 1px solid rgba(201, 169, 97, 0.22);
+    border-bottom: 1px solid rgba(201, 169, 97, 0.22);
+    border-radius: 0;    /* border-image ignores radius — embrace the sharp edge */
+}
+
+/* ---------- Scroll-driven ambience (no JS, Chrome/Edge) ---------- */
+
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .section-title,
+        .section-subtitle {
+            animation: rise-in linear both;
+            animation-timeline: view();
+            animation-range: entry 5% entry 45%;
+        }
+
+        @keyframes rise-in {
+            from {
+                opacity: 0;
+                transform: translateY(26px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    }
+}
+
+/* ---------- Misc refinements ---------- */
+
+/* Smoothly animatable accordions where supported */
+:root {
+    interpolate-size: allow-keywords;
+}
+
+/* Logo carousel pagination dots in brand purple, gold when active */
+.carousel-dot.is-active {
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light));
+}
+
+/* Dropdown menu: soft gold hairline + deeper shadow */
+.dropdown-menu {
+    border: 1px solid rgba(201, 169, 97, 0.25);
+    box-shadow: var(--shadow-elev-3);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+/* Footer tagline set in the display face for a signature feel */
+.footer-tagline {
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.75);
+}
 
 /* ---------- Print refinements ---------- */
 

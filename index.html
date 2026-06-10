@@ -45,7 +45,10 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=10">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=10">
     <link rel="manifest" href="manifest.webmanifest">
-    <link rel="stylesheet" href="css/styles.css?v=27">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css?v=28">
 
     <!-- Preload critical assets for faster LCP -->
     <link rel="preload" as="image" href="images/homepage%20showcase/1.avif" fetchpriority="high">
@@ -291,14 +294,21 @@
         </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1 class="hero-title fade-in">Excellence in Management Services</h1>
+            <p class="hero-eyebrow">Abu Dhabi &middot; United Arab Emirates</p>
+            <h1 class="hero-title fade-in"><span class="hero-title-accent">Excellence</span> in Management Services</h1>
             <p class="hero-subtitle fade-in-delay">Leading investment and management group based in Abu Dhabi, delivering integrated solutions across construction, maintenance, facilities management, interior design, real estate management, and consultancy</p>
             <a href="contact.html" class="btn btn-primary fade-in-delay-2">Request a Quote</a>
         </div>
+        <a href="#our-services" class="hero-scroll-cue" aria-label="Scroll to our services">
+            <span>Discover</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
     </section>
 
     <!-- Services Overview -->
-    <section class="services-overview section">
+    <section class="services-overview section" id="our-services">
         <div class="container">
             <h2 class="section-title">Our Services</h2>
             <p class="section-subtitle">Comprehensive management solutions tailored to your needs</p>
@@ -351,6 +361,30 @@
                     <h3>Peace of Mind</h3>
                     <p>Dedicated account management and 24/7 support for complete confidence in your facility operations.</p>
                 </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Group at a Glance -->
+    <section class="stats-band" aria-label="La Marquise Group at a glance">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number"><span data-count="6">0</span></div>
+                    <div class="stat-label">Group Companies</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number"><span data-count="10">0</span><span class="stat-suffix">+</span></div>
+                    <div class="stat-label">Service Lines</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number"><span data-count="3">0</span></div>
+                    <div class="stat-label">Cities Served</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24<span class="stat-suffix">/7</span></div>
+                    <div class="stat-label">Operations Support</div>
+                </div>
             </div>
         </div>
     </section>
@@ -481,6 +515,6 @@
         </div>
     </footer>
 
-    <script src="js/script.js?v=27"></script>
+    <script src="js/script.js?v=28"></script>
 </body>
 </html>

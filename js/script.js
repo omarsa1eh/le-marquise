@@ -1097,6 +1097,138 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ========================================
+// Staggered Reveal for Card Grids
+// ========================================
+// Children of these containers fade-rise in sequence the first
+// time the grid scrolls into view. Inline styles are removed on
+// completion so hover transforms keep working untouched.
+
+document.addEventListener('DOMContentLoaded', function() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion || !('IntersectionObserver' in window)) return;
+
+    const GRID_SELECTORS = [
+        '.service-cards',
+        '.why-grid',
+        '.values-grid',
+        '.benefits-grid',
+        '.careers-benefits',
+        '.careers-benefits-grid',
+        '.process-grid',
+        '.certifications-grid',
+        '.mission-grid',
+        '.job-listings',
+        '.services-expandable-list',
+        '.stats-band .stats-grid'
+    ];
+
+    const grids = document.querySelectorAll(GRID_SELECTORS.join(', '));
+    if (!grids.length) return;
+
+    grids.forEach(grid => {
+        Array.from(grid.children).forEach(child => {
+            child.style.opacity = '0';
+            child.style.transform = 'translateY(24px)';
+        });
+    });
+
+    const gridObserver = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            observer.unobserve(entry.target);
+
+            Array.from(entry.target.children).forEach((child, i) => {
+                child.style.transition =
+                    'opacity 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) ' + (i * 90) + 'ms, ' +
+                    'transform 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) ' + (i * 90) + 'ms';
+
+                requestAnimationFrame(() => {
+                    child.style.opacity = '1';
+                    child.style.transform = 'translateY(0)';
+                });
+
+                // Release inline styles so CSS hover effects take over
+                child.addEventListener('transitionend', function cleanup(e) {
+                    if (e.propertyName !== 'transform') return;
+                    child.style.removeProperty('opacity');
+                    child.style.removeProperty('transform');
+                    child.style.removeProperty('transition');
+                    child.removeEventListener('transitionend', cleanup);
+                });
+            });
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    grids.forEach(grid => gridObserver.observe(grid));
+
+    // Safety net: if the observer never fires (unusual embedders,
+    // print, etc.) make sure nothing stays hidden.
+    setTimeout(() => {
+        grids.forEach(grid => {
+            Array.from(grid.children).forEach(child => {
+                if (child.style.opacity === '0') {
+                    child.style.removeProperty('opacity');
+                    child.style.removeProperty('transform');
+                    child.style.removeProperty('transition');
+                }
+            });
+        });
+    }, 4000);
+});
+
+// ========================================
+// Count-Up Animation for Stats
+// ========================================
+// Elements with [data-count] tick from 0 to their target the
+// first time they become visible. Respects reduced motion.
+
+document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('[data-count]');
+    if (!counters.length) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const animateCount = (el) => {
+        const target = parseInt(el.dataset.count, 10);
+        if (isNaN(target)) return;
+
+        if (reduceMotion || !('requestAnimationFrame' in window)) {
+            el.textContent = target;
+            return;
+        }
+
+        const duration = 1600;
+        let startTime = null;
+
+        const tick = (now) => {
+            if (startTime === null) startTime = now;
+            const progress = Math.min((now - startTime) / duration, 1);
+            // ease-out-quart so the final digits settle gently
+            const eased = 1 - Math.pow(1 - progress, 4);
+            el.textContent = Math.round(eased * target);
+            if (progress < 1) requestAnimationFrame(tick);
+        };
+
+        requestAnimationFrame(tick);
+    };
+
+    if (!('IntersectionObserver' in window)) {
+        counters.forEach(el => { el.textContent = el.dataset.count; });
+        return;
+    }
+
+    const countObserver = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            observer.unobserve(entry.target);
+            animateCount(entry.target);
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(el => countObserver.observe(el));
+});
+
+// ========================================
 // Job Listings Toggle (Careers Page)
 // ========================================
 
