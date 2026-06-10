@@ -22,7 +22,7 @@
     --color-error: #ef4444;
 
     /* Typography */
-    --font-primary: 'Georgia', 'Times New Roman', serif;
+    --font-primary: 'Cormorant Garamond', 'Georgia', 'Times New Roman', serif;
     --font-secondary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
 
     /* Spacing */
@@ -3370,6 +3370,891 @@ select.form-input:focus {
 }
 
 /* On dark sections, the white pill stays — no override needed */
+
+/* ============================================================
+   FABLE 5 REFRESH · 2026
+   ------------------------------------------------------------
+   A bolder modernisation layer: Cormorant Garamond display
+   typography, cross-document view transitions, Ken Burns hero,
+   scroll-driven reveals, gold shine micro-interactions, stats
+   band, and ambient section texture. Sits last in the cascade.
+   ============================================================ */
+
+/* ---------- Cross-document page transitions (MPA) ---------- */
+
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root) {
+    animation-duration: 0.22s;
+}
+
+::view-transition-new(root) {
+    animation-duration: 0.3s;
+}
+
+/* Keep the fixed navbar steady while the page content fades */
+.navbar {
+    view-transition-name: site-nav;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    @view-transition {
+        navigation: none;
+    }
+}
+
+/* ---------- Display typography: Cormorant Garamond ---------- */
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: 0.005em;
+}
+
+/* Cormorant runs visually smaller than Georgia — compensate */
+h1 { font-size: clamp(2.75rem, 5.5vw, 4.5rem); }
+h2 { font-size: clamp(2.125rem, 4vw, 3.25rem); }
+h3 { font-size: clamp(1.625rem, 3vw, 2.125rem); }
+
+.hero-title {
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.12;
+}
+
+/* Gold gradient accent word inside the hero title */
+.hero-title-accent {
+    font-style: italic;
+    font-weight: 600;
+    background: linear-gradient(
+        100deg,
+        #e8d6a4 0%,
+        var(--color-accent) 45%,
+        #a88b4a 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    padding-right: 0.06em;    /* room for the italic overhang */
+}
+
+/* Eyebrow line above the hero title */
+.hero-eyebrow {
+    font-family: var(--font-secondary);
+    font-size: clamp(0.7rem, 1.2vw, 0.8125rem);
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-accent-light);
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    animation: fadeIn 0.8s var(--ease-out-expo) 0.1s forwards;
+}
+
+.hero-eyebrow::before,
+.hero-eyebrow::after {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    width: clamp(20px, 4vw, 44px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-accent-light));
+    margin: 0 0.9em 0.2em 0;
+}
+
+.hero-eyebrow::after {
+    background: linear-gradient(90deg, var(--color-accent-light), transparent);
+    margin: 0 0 0.2em 0.9em;
+}
+
+/* ---------- Ken Burns hero slideshow ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+    .hero-slide.active {
+        animation: kenburns 9s var(--ease-out-quart) both;
+    }
+
+    @keyframes kenburns {
+        from { transform: scale(1.08); }
+        to   { transform: scale(1); }
+    }
+}
+
+/* Richer cinematic overlay: vignette + brand tint */
+.hero-overlay {
+    background:
+        radial-gradient(
+            120% 90% at 50% 10%,
+            rgba(42, 20, 64, 0.18) 0%,
+            rgba(42, 20, 64, 0.42) 70%,
+            rgba(20, 8, 34, 0.62) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(42, 20, 64, 0.38) 0%,
+            rgba(42, 20, 64, 0.5) 100%
+        );
+}
+
+/* Scroll cue at the bottom of the hero */
+.hero-scroll-cue {
+    position: absolute;
+    bottom: clamp(1.25rem, 4vh, 2.5rem);
+    /* centered via inset + auto margins — the fadeIn animation animates
+       `transform`, which would override transform-based centering */
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    width: max-content;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-family: var(--font-secondary);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.4s forwards;
+    transition: color 0.3s ease;
+}
+
+.hero-scroll-cue:hover {
+    color: var(--color-accent-light);
+}
+
+.hero-scroll-cue svg {
+    display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .hero-scroll-cue svg {
+        animation: cue-bob 2.2s var(--ease-in-out-cubic) infinite;
+    }
+
+    @keyframes cue-bob {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(7px); }
+    }
+}
+
+/* ---------- Shrinking glass navbar ---------- */
+
+.logo-image {
+    transition: height 0.45s var(--ease-out-quart), opacity 0.3s ease;
+}
+
+.navbar.scrolled .logo-image {
+    height: 62px;
+}
+
+@media (max-width: 768px) {
+    .logo-image {
+        height: 64px;
+    }
+
+    .navbar.scrolled .logo-image {
+        height: 52px;
+    }
+}
+
+/* ---------- Gold shine sweep on primary buttons ---------- */
+
+.btn {
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: linear-gradient(
+        135deg,
+        var(--color-accent-light) 0%,
+        var(--color-accent) 55%,
+        #b8923f 100%
+    );
+}
+
+.btn-primary::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        105deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.38) 50%,
+        transparent 65%
+    );
+    transform: translateX(-130%);
+}
+
+.btn-primary:hover::before,
+.btn-primary:focus-visible::before {
+    transition: transform 0.7s var(--ease-out-quart);
+    transform: translateX(130%);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(
+        135deg,
+        #e0c684 0%,
+        var(--color-accent-light) 55%,
+        var(--color-accent) 100%
+    );
+}
+
+/* ---------- Ambient section texture ---------- */
+
+.section-light,
+.companies-section {
+    background-color: var(--color-background-light);
+    background-image:
+        radial-gradient(
+            55% 45% at 8% 0%,
+            rgba(201, 169, 97, 0.07) 0%,
+            transparent 100%
+        ),
+        radial-gradient(
+            50% 40% at 96% 100%,
+            rgba(61, 31, 92, 0.05) 0%,
+            transparent 100%
+        );
+}
+
+.section-dark {
+    background-image:
+        radial-gradient(
+            70% 60% at 85% 0%,
+            rgba(201, 169, 97, 0.1) 0%,
+            transparent 100%
+        ),
+        radial-gradient(
+            60% 50% at 10% 100%,
+            rgba(255, 255, 255, 0.04) 0%,
+            transparent 100%
+        );
+}
+
+.page-hero {
+    background:
+        radial-gradient(
+            80% 100% at 80% 0%,
+            rgba(201, 169, 97, 0.16) 0%,
+            transparent 60%
+        ),
+        linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+}
+
+/* Gold flourish under the page-hero title */
+.page-hero-title::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 2px;
+    margin: 1.1rem auto 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-accent) 30%,
+        var(--color-accent) 70%,
+        transparent
+    );
+}
+
+/* ---------- Section title flourish: diamond + lines ---------- */
+
+.section-title::after {
+    width: 88px;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-accent) 25%,
+        var(--color-accent) 75%,
+        transparent
+    );
+}
+
+/* ---------- Stats band (homepage) ---------- */
+
+.stats-band {
+    background:
+        radial-gradient(
+            90% 130% at 50% -30%,
+            rgba(201, 169, 97, 0.12) 0%,
+            transparent 60%
+        ),
+        linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    border-top: 3px solid var(--color-border-section);
+    border-bottom: 3px solid var(--color-border-section);
+    padding: calc(var(--spacing-lg) + 0.5rem) 0;
+}
+
+.section-dark + .stats-band {
+    border-top: none;
+}
+
+.stats-band .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    text-align: center;
+}
+
+.stats-band .stat-item {
+    padding: var(--spacing-sm);
+    position: relative;
+}
+
+.stats-band .stat-item + .stat-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 56px;
+    width: 1px;
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(201, 169, 97, 0.4),
+        transparent
+    );
+}
+
+.stats-band .stat-number {
+    font-family: var(--font-primary);
+    font-size: clamp(2.5rem, 4.5vw, 3.75rem);
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.stats-band .stat-number .stat-suffix {
+    color: var(--color-accent);
+    font-style: italic;
+}
+
+.stats-band .stat-label {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+    .stats-band .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-md) var(--spacing-sm);
+    }
+
+    /* Only keep the divider between columns, not across rows */
+    .stats-band .stat-item:nth-child(3)::before {
+        display: none;
+    }
+}
+
+/* ---------- Why-card top rule becomes a gradient ---------- */
+
+.why-card {
+    border-top: 3px solid transparent;
+    border-image: linear-gradient(
+        90deg,
+        var(--color-accent-light),
+        var(--color-accent) 50%,
+        rgba(201, 169, 97, 0.25)
+    ) 1;
+    border-left: 1px solid rgba(201, 169, 97, 0.22);
+    border-right: 1px solid rgba(201, 169, 97, 0.22);
+    border-bottom: 1px solid rgba(201, 169, 97, 0.22);
+    border-radius: 0;    /* border-image ignores radius — embrace the sharp edge */
+}
+
+/* ---------- Scroll-driven ambience (no JS, Chrome/Edge) ---------- */
+
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .section-title,
+        .section-subtitle {
+            animation: rise-in linear both;
+            animation-timeline: view();
+            animation-range: entry 5% entry 45%;
+        }
+
+        @keyframes rise-in {
+            from {
+                opacity: 0;
+                transform: translateY(26px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    }
+}
+
+/* ---------- Misc refinements ---------- */
+
+/* Smoothly animatable accordions where supported */
+:root {
+    interpolate-size: allow-keywords;
+}
+
+/* Logo carousel pagination dots in brand purple, gold when active */
+.carousel-dot.is-active {
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light));
+}
+
+/* Dropdown menu: soft gold hairline + deeper shadow */
+.dropdown-menu {
+    border: 1px solid rgba(201, 169, 97, 0.25);
+    box-shadow: var(--shadow-elev-3);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+/* Footer tagline set in the display face for a signature feel */
+.footer-tagline {
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+/* ============================================================
+   FABLE 5 REFRESH · PHASE 2 — new homepage components
+   ============================================================ */
+
+/* ---------- Services grid (replaces one-at-a-time carousel) ---------- */
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(216px, 1fr));
+    gap: 1.25rem;
+    margin-top: var(--spacing-md);
+}
+
+.svc-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 1.5rem 1.5rem;
+    background: var(--color-background);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 18%, transparent);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-elev-1);
+    overflow: hidden;
+    transition:
+        transform 0.5s var(--ease-out-quart),
+        box-shadow 0.5s var(--ease-out-quart),
+        border-color 0.4s ease;
+}
+
+/* Gold bar that draws across the top on hover */
+.svc-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-accent-light), var(--color-accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease-out-quart);
+}
+
+.svc-card:hover,
+.svc-card:focus-visible {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-elev-3);
+    border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
+.svc-card:hover::before,
+.svc-card:focus-visible::before {
+    transform: scaleX(1);
+}
+
+.svc-num {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.25rem;
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+
+.svc-icon {
+    display: inline-flex;
+    color: var(--color-accent);
+    margin-bottom: 0.9rem;
+    transition: transform 0.5s var(--ease-out-quart);
+}
+
+.svc-card:hover .svc-icon {
+    transform: translateY(-3px) scale(1.08);
+}
+
+.svc-title {
+    font-size: 1.3rem;
+    line-height: 1.25;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    text-wrap: balance;
+}
+
+.svc-desc {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--color-text-light);
+    margin-bottom: 1rem;
+    flex: 1;
+}
+
+.svc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+}
+
+.svc-link svg {
+    transition: transform 0.4s var(--ease-out-quart);
+}
+
+.svc-card:hover .svc-link svg {
+    transform: translateX(5px);
+}
+
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.875rem;
+    }
+
+    .svc-card {
+        padding: 1.25rem 1rem 1rem;
+    }
+
+    .svc-desc {
+        display: none;    /* keep cards compact on phones */
+    }
+
+    .svc-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.75rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Trusted institutions marquee ---------- */
+
+.trust-strip {
+    background: var(--color-background-light);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border-section) 35%, transparent);
+    padding: 1.5rem 0 1.6rem;
+    overflow: hidden;
+}
+
+.trust-label {
+    text-align: center;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-bottom: 1rem;
+}
+
+.trust-marquee {
+    position: relative;
+    overflow: hidden;
+    /* soft fade at both edges */
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.trust-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    gap: 3.5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .trust-track.is-animated {
+        animation: trust-scroll 36s linear infinite;
+    }
+
+    .trust-marquee:hover .trust-track.is-animated {
+        animation-play-state: paused;
+    }
+
+    @keyframes trust-scroll {
+        from { transform: translateX(0); }
+        to   { transform: translateX(-50%); }
+    }
+}
+
+.trust-item {
+    position: relative;
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-size: 1.25rem;
+    color: color-mix(in srgb, var(--color-primary) 72%, transparent);
+    white-space: nowrap;
+}
+
+.trust-item::after {
+    content: "\25C6";    /* small diamond */
+    font-style: normal;
+    font-size: 0.45rem;
+    color: var(--color-accent);
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* If reduced motion (no marquee), wrap gracefully */
+@media (prefers-reduced-motion: reduce) {
+    .trust-track {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        gap: 1rem 3.5rem;
+    }
+}
+
+/* ---------- FAQ section ---------- */
+
+.faq-section {
+    background-color: var(--color-background-light);
+}
+
+.faq-section .service-expandable-header h3 {
+    font-family: var(--font-secondary);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+
+.faq-section .service-expandable-header h3::before {
+    content: "Q ";
+    color: var(--color-accent);
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-weight: 600;
+    margin-right: 0.6rem;
+}
+
+/* ---------- Scroll progress bar (site-wide, JS-injected) ---------- */
+
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--color-accent-light), var(--color-accent));
+    transform-origin: left;
+    transform: scaleX(0);
+    z-index: 1100;
+    pointer-events: none;
+}
+
+/* ---------- Floating action buttons (site-wide, JS-injected) ---------- */
+
+.fab-stack {
+    position: fixed;
+    right: clamp(1rem, 3vw, 1.75rem);
+    bottom: clamp(1rem, 3vw, 1.75rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 1050;
+}
+
+.fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    box-shadow: var(--shadow-elev-3);
+    transition:
+        transform 0.4s var(--ease-out-quart),
+        box-shadow 0.4s var(--ease-out-quart),
+        opacity 0.35s ease,
+        visibility 0.35s ease;
+}
+
+.fab:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: var(--shadow-elev-4);
+}
+
+.fab:active {
+    transform: scale(0.96);
+    transition-duration: 0.1s;
+}
+
+.fab-whatsapp {
+    background: #25d366;    /* official WhatsApp green — instantly recognisable */
+    color: #ffffff;
+}
+
+.fab-whatsapp:hover {
+    background: #1ebe5b;
+}
+
+.fab-top {
+    background: var(--color-primary);
+    color: var(--color-accent);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.fab-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+@media print {
+    .fab-stack,
+    .scroll-progress {
+        display: none !important;
+    }
+}
+
+/* ---------- Page map — section dot navigator (JS-injected) ---------- */
+
+.section-spy {
+    position: fixed;
+    right: clamp(1rem, 2.2vw, 1.9rem);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    z-index: 950;
+}
+
+/* faint vertical guide line behind the dots */
+.section-spy::before {
+    content: "";
+    position: absolute;
+    top: -14px;
+    bottom: -14px;
+    left: 50%;
+    width: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(201, 169, 97, 0.4) 20%,
+        rgba(201, 169, 97, 0.4) 80%,
+        transparent
+    );
+    pointer-events: none;
+}
+
+.spy-dot {
+    position: relative;
+    width: 11px;
+    height: 11px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1.5px solid color-mix(in srgb, var(--color-accent) 75%, #7a6434);
+    background: var(--color-background);
+    cursor: pointer;
+    transition:
+        transform 0.35s var(--ease-out-quart),
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.35s ease;
+}
+
+.spy-dot:hover {
+    transform: scale(1.35);
+    border-color: var(--color-accent);
+}
+
+.spy-dot.is-active {
+    background: linear-gradient(135deg, var(--color-accent-light), var(--color-accent));
+    border-color: var(--color-accent);
+    transform: scale(1.25);
+    box-shadow: 0 0 0 4px rgba(201, 169, 97, 0.22);
+}
+
+/* serif label that slides out on hover / focus / active */
+.spy-dot::after {
+    content: attr(data-label);
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%) translateX(6px);
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1;
+    color: var(--color-primary);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(201, 169, 97, 0.35);
+    border-radius: 99px;
+    padding: 0.45em 0.95em;
+    white-space: nowrap;
+    box-shadow: var(--shadow-elev-1);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        opacity 0.3s ease,
+        transform 0.4s var(--ease-out-quart);
+}
+
+.spy-dot:hover::after,
+.spy-dot:focus-visible::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* hide on tablets / phones — too little room next to content */
+@media (max-width: 1180px) {
+    .section-spy {
+        display: none;
+    }
+}
+
+@media print {
+    .section-spy {
+        display: none !important;
+    }
+}
 
 /* ---------- Print refinements ---------- */
 

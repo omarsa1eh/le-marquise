@@ -45,7 +45,10 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=10">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=10">
     <link rel="manifest" href="manifest.webmanifest">
-    <link rel="stylesheet" href="css/styles.css?v=27">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css?v=30">
 
     <!-- Preload critical assets for faster LCP -->
     <link rel="preload" as="image" href="images/homepage%20showcase/1.avif" fetchpriority="high">
@@ -277,7 +280,7 @@
 
 
     <!-- Hero Section -->
-    <section class="hero" id="heroSection">
+    <section class="hero" id="heroSection" data-spy-label="Top">
         <div class="hero-slideshow">
             <div class="hero-slide active" style="background-image: url('images/homepage showcase/1.avif');"></div>
             <div class="hero-slide" style="background-image: url('images/homepage showcase/2.jpeg');"></div>
@@ -291,14 +294,35 @@
         </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1 class="hero-title fade-in">Excellence in Management Services</h1>
+            <p class="hero-eyebrow">Abu Dhabi &middot; United Arab Emirates</p>
+            <h1 class="hero-title fade-in"><span class="hero-title-accent">Excellence</span> in Management Services</h1>
             <p class="hero-subtitle fade-in-delay">Leading investment and management group based in Abu Dhabi, delivering integrated solutions across construction, maintenance, facilities management, interior design, real estate management, and consultancy</p>
             <a href="contact.html" class="btn btn-primary fade-in-delay-2">Request a Quote</a>
+        </div>
+        <a href="#our-services" class="hero-scroll-cue" aria-label="Scroll to our services">
+            <span>Discover</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+    </section>
+
+    <!-- Trusted Institutions Strip -->
+    <section class="trust-strip" aria-label="Institutions we have worked with">
+        <p class="trust-label">Hands-on experience across Abu Dhabi&rsquo;s leading institutions</p>
+        <div class="trust-marquee">
+            <div class="trust-track" id="trustTrack">
+                <span class="trust-item">Abu Dhabi Sports Council</span>
+                <span class="trust-item">Abu Dhabi Ladies Club</span>
+                <span class="trust-item">MENA College of Management</span>
+                <span class="trust-item">UAE Academy</span>
+                <span class="trust-item">Abu Dhabi School of Management</span>
+            </div>
         </div>
     </section>
 
     <!-- Services Overview -->
-    <section class="services-overview section">
+    <section class="services-overview section" id="our-services" data-spy-label="Services">
         <div class="container">
             <h2 class="section-title">Our Services</h2>
             <p class="section-subtitle">Comprehensive management solutions tailored to your needs</p>
@@ -306,28 +330,83 @@
                 <img src="images/LM Vertical_no_bg.png" alt="La Marquise" class="section-logo" loading="lazy" decoding="async">
             </div>
 
-            <div class="carousel" id="servicesCarousel">
-                <button type="button" class="arrow prev" aria-label="Previous service">
-                    <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 8L12 16L20 24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
-                <div class="viewport">
-                    <div class="track">
-                        <!-- Slides will be injected by JS -->
-                    </div>
-                </div>
-                <button type="button" class="arrow next" aria-label="Next service">
-                    <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 8L20 16L12 24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
+            <div class="services-grid">
+                <a href="service-facilities.html" class="svc-card">
+                    <span class="svc-num">01</span>
+                    <span class="svc-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v16M15 9h3a1 1 0 0 1 1 1v11M8 8h2M8 12h2M8 16h2"/></svg></span>
+                    <h3 class="svc-title">Facilities Management</h3>
+                    <p class="svc-desc">Comprehensive facility operations and maintenance for residential, commercial, and industrial properties.</p>
+                    <span class="svc-link">Explore<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </a>
+                <a href="service-properties.html" class="svc-card">
+                    <span class="svc-num">02</span>
+                    <span class="svc-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7M5 9.5V21h14V9.5M9.5 21v-6h5v6"/></svg></span>
+                    <h3 class="svc-title">Properties Management</h3>
+                    <p class="svc-desc">Expert property portfolio management, leasing, and tenant relations services.</p>
+                    <span class="svc-link">Explore<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </a>
+                <a href="service-corporate.html" class="svc-card">
+                    <span class="svc-num">03</span>
+                    <span class="svc-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg></span>
+                    <h3 class="svc-title">Corporate Management</h3>
+                    <p class="svc-desc">Strategic supervision and coordination of group operations across all subsidiaries.</p>
+                    <span class="svc-link">Explore<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </a>
+                <a href="service-consultancy.html" class="svc-card">
+                    <span class="svc-num">04</span>
+                    <span class="svc-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 17l5-5 4 3 7-8"/><path d="M16 7h4v4"/></svg></span>
+                    <h3 class="svc-title">Real Estate Consultancy</h3>
+                    <p class="svc-desc">Feasibility studies, investment advisory, and development strategies aligned with market trends.</p>
+                    <span class="svc-link">Explore<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </a>
+                <a href="service-interior.html" class="svc-card">
+                    <span class="svc-num">05</span>
+                    <span class="svc-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M3 13a2 2 0 0 1 2-2c1.1 0 2 .9 2 2v2h10v-2a2 2 0 1 1 4 0v5h-2v-2H5v2H3v-5z"/></svg></span>
+                    <h3 class="svc-title">Interior Design</h3>
+                    <p class="svc-desc">Creative interior design solutions for homes and businesses.</p>
+                    <span class="svc-link">Explore<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </a>
+                <a href="service-contracting.html" class="svc-card">
+                    <span class="svc-num">06</span>
+                    <span class="svc-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M6 20V9l6-5 6 5v11M10 20v-4h4v4"/><path d="M12 9v3"/></svg></span>
+                    <h3 class="svc-title">General Contracting</h3>
+                    <p class="svc-desc">Quality construction and finishing solutions for residential and commercial projects.</p>
+                    <span class="svc-link">Explore<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </a>
+                <a href="service-landscaping.html" class="svc-card">
+                    <span class="svc-num">07</span>
+                    <span class="svc-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V10M12 10c0-4-3-7-7-7 0 4 3 7 7 7zM12 13c0-3.3 2.7-6 6-6 0 3.3-2.7 6-6 6zM7 21h10"/></svg></span>
+                    <h3 class="svc-title">Landscaping</h3>
+                    <p class="svc-desc">Expert landscaping design and maintenance services.</p>
+                    <span class="svc-link">Explore<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </a>
+                <a href="service-cleaning.html" class="svc-card">
+                    <span class="svc-num">08</span>
+                    <span class="svc-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3zM19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14zM5 15l.7 1.8L7.5 17.5l-1.8.7L5 20l-.7-1.8L2.5 17.5l1.8-.7L5 15z"/></svg></span>
+                    <h3 class="svc-title">Cleaning Services</h3>
+                    <p class="svc-desc">Professional cleaning solutions for all property types.</p>
+                    <span class="svc-link">Explore<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </a>
+                <a href="service-pool.html" class="svc-card">
+                    <span class="svc-num">09</span>
+                    <span class="svc-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0M2 12c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0M9 9V5a2 2 0 0 1 4 0"/></svg></span>
+                    <h3 class="svc-title">Swimming Pool Management</h3>
+                    <p class="svc-desc">Complete pool operation, maintenance, and water quality management services.</p>
+                    <span class="svc-link">Explore<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </a>
+                <a href="service-maintenance.html" class="svc-card">
+                    <span class="svc-num">10</span>
+                    <span class="svc-icon" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4L15 12l-3-3 2.7-2.7z"/></svg></span>
+                    <h3 class="svc-title">Maintenance Services</h3>
+                    <p class="svc-desc">Full-scale maintenance including scheduled and emergency repairs, renovations, and technical support.</p>
+                    <span class="svc-link">Explore<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Why Choose Us -->
-    <section class="why-choose section-dark">
+    <section class="why-choose section-dark" id="why-us" data-spy-label="Why Us">
         <div class="container">
             <h2 class="section-title">Why La Marquise Group</h2>
             <div class="why-grid">
@@ -355,8 +434,32 @@
         </div>
     </section>
 
+    <!-- Group at a Glance -->
+    <section class="stats-band" aria-label="La Marquise Group at a glance">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number"><span data-count="6">0</span></div>
+                    <div class="stat-label">Group Companies</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number"><span data-count="10">0</span><span class="stat-suffix">+</span></div>
+                    <div class="stat-label">Service Lines</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number"><span data-count="3">0</span></div>
+                    <div class="stat-label">Cities Served</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24<span class="stat-suffix">/7</span></div>
+                    <div class="stat-label">Operations Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Our Companies Section -->
-    <section class="companies-section section-light">
+    <section class="companies-section section-light" id="our-companies" data-spy-label="Companies">
         <div class="container">
             <div class="companies-header">
                 <div>
@@ -390,7 +493,7 @@
     </section>
 
     <!-- Careers Section -->
-    <section class="careers-section section">
+    <section class="careers-section section" id="careers" data-spy-label="Careers">
         <div class="container">
             <h2 class="section-title">Join Our Team</h2>
             <p class="section-subtitle">Be part of a dynamic team delivering excellence across the UAE</p>
@@ -424,8 +527,62 @@
         </div>
     </section>
 
+    <!-- FAQ Section -->
+    <section class="faq-section section" id="faq" data-spy-label="FAQs">
+        <div class="container">
+            <h2 class="section-title">Common Questions</h2>
+            <p class="section-subtitle">Quick answers about working with La Marquise Group</p>
+            <div class="services-expandable-list">
+                <div class="service-expandable-item">
+                    <div class="service-expandable-header">
+                        <h3>Where is La Marquise Group based?</h3>
+                        <button type="button" class="service-expand-toggle" aria-label="Expand answer">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        </button>
+                    </div>
+                    <div class="service-expandable-content">
+                        <p>La Marquise Group is headquartered in Abu Dhabi, United Arab Emirates and provides facility management and real estate services across the UAE.</p>
+                    </div>
+                </div>
+                <div class="service-expandable-item">
+                    <div class="service-expandable-header">
+                        <h3>What facility management services do you offer in Abu Dhabi?</h3>
+                        <button type="button" class="service-expand-toggle" aria-label="Expand answer">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        </button>
+                    </div>
+                    <div class="service-expandable-content">
+                        <p>We deliver integrated facility management including MEP maintenance, HVAC, cleaning, swimming pool care, fire safety, landscaping, interior design and general contracting. Annual Maintenance Contracts are available for commercial, residential and recreational facilities.</p>
+                    </div>
+                </div>
+                <div class="service-expandable-item">
+                    <div class="service-expandable-header">
+                        <h3>Does La Marquise work with Abu Dhabi Civil Defence requirements?</h3>
+                        <button type="button" class="service-expand-toggle" aria-label="Expand answer">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        </button>
+                    </div>
+                    <div class="service-expandable-content">
+                        <p>Yes. Our fire and life safety maintenance complies with Abu Dhabi Civil Defence (ADCD) regulations and the UAE Fire &amp; Life Safety Code, including periodic inspection, testing and emergency response.</p>
+                    </div>
+                </div>
+                <div class="service-expandable-item">
+                    <div class="service-expandable-header">
+                        <h3>How do I request a facility management quotation?</h3>
+                        <button type="button" class="service-expand-toggle" aria-label="Expand answer">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        </button>
+                    </div>
+                    <div class="service-expandable-content">
+                        <p>Use the contact form on marquise.ae or email info.fm@marquise.ae. Our team responds within one business day with a site survey or proposal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA Section -->
-    <section class="cta-section section">
+    <section class="cta-section section" id="get-in-touch" data-spy-label="Contact">
         <div class="container">
             <div class="cta-content reveal">
                 <h2 class="cta-title">Ready to Transform Your Business?</h2>
@@ -481,6 +638,6 @@
         </div>
     </footer>
 
-    <script src="js/script.js?v=27"></script>
+    <script src="js/script.js?v=30"></script>
 </body>
 </html>
