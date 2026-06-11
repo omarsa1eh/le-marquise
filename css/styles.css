@@ -4149,6 +4149,46 @@ h3 { font-size: clamp(1.625rem, 3vw, 2.125rem); }
     }
 }
 
+/* ---------- Service page photography ---------- */
+
+.service-photo {
+    width: 100%;
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+    box-shadow: var(--shadow-elev-2);
+    display: block;
+}
+
+/* Single portrait photo — capped width, centered */
+.service-photo--portrait {
+    max-width: 520px;
+    margin: var(--spacing-md) auto;
+}
+
+/* Pair of photos side by side, normalised crop */
+.service-photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: var(--spacing-md) 0;
+}
+
+.service-photo-grid .service-photo {
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    height: 100%;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .service-photo-grid {
+        grid-template-columns: 1fr;
+        max-width: 440px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
 /* ---------- Page map — section dot navigator (JS-injected) ---------- */
 
 .section-spy {
