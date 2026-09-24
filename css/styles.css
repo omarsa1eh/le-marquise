@@ -2236,7 +2236,7 @@ p {
 }
 
 .job-item.active .job-details {
-    max-height: 1000px;
+    max-height: 1600px;
     padding: 0 var(--spacing-lg) var(--spacing-md);
 }
 
